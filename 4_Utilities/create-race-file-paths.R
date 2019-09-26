@@ -26,7 +26,7 @@ race_csv_path <- function(lookup_df){
     ),
     
     csv_path = str_replace_all(csv_path, " ", "-"),
-    csv_path = str_replace_all(csv_path, "[^[a-zA-Z0-9-_/,] ]", "")
+    csv_path = str_replace_all(csv_path, "[^[a-zA-Z0-9-_/.] ]", "")
   )
   
   return(lookup_df)
