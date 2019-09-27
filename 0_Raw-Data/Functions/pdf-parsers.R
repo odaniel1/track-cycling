@@ -14,20 +14,10 @@ parse_team_sprint <- function(path){
       raw = gsub("GOLD|SILVER|BRONZE", "", raw) %>% str_squish()
     )
   
-  # Get distance of race
-  dist <- df %>% filter( grepl("Race distance", raw)) %>% unlist %>% str_replace(".*Race distance: ", "")
-  
   # Reduce to rows which contain team race timings. These are identified as they start with a number
   # followed by a three letter team code and a hyphen.
   df <- df %>%
     filter(grepl("^([0-9] ){0,1}[0-9]{1,2} [A-Z]{3} - ", raw))
-  
-  # Add fields to df for the distance of the race, and the pdf file path.
-  df <- df %>%
-    mutate(
-      distance = dist,
-      path = path
-    )
   
   # Clean the raw text
   df <- df %>% 
@@ -54,10 +44,11 @@ parse_team_sprint <- function(path){
   # Reduce data to the team name, distance, final time (lap 3), average
   # speed, and pdf file path.
   df <- df %>%
-    select(team, distance, time = lap_3, avg_speed_kph, path) %>%
+    select(team, time = lap_3, avg_speed_kph) %>%
     mutate(
       time = as.numeric(time),
-      avg_speed_kph = as.numeric(avg_speed_kph)
+      avg_speed_kph = as.numeric(avg_speed_kph),
+      pdf_path = path
     )
   
   return(df)
@@ -65,13 +56,10 @@ parse_team_sprint <- function(path){
 
 parse_sprint_qualifying <- function(path){
   
-  # Parse pdf to a data frame.
+  # Parse pdf to a string.
   df <- pdf_text(path) %>%
-    paste(sep = " ", collapse = "") %>%
+    paste(sep = " ", collapse = "")%>%
     readr::read_lines() %>% data_frame(raw = .)
-  
-  # Get distance of race
-  dist <- df %>% filter( grepl("Race distance", raw)) %>% unlist %>% str_replace(".*Race distance: ", "")
   
   # Remove leading/trailing whitespace, and reduce multiple whitespaces to single spaces.
   df <- df %>% mutate(raw = str_squish(raw))
@@ -81,14 +69,7 @@ parse_sprint_qualifying <- function(path){
   # rider number.
   df <- df %>%
     filter(grepl("^([0-9] ){0,1}[0-9]{1,2} [0-9]{2,3}", raw))
-  
-  # Add fields to df for the distance of the race, and the pdf file path.
-  df <- df %>%
-    mutate(
-      distance = dist,
-      path = path
-    )
-  
+
   # Clean the raw text
   df <- df %>% 
     mutate(
@@ -123,13 +104,14 @@ parse_sprint_qualifying <- function(path){
       sep = " "
     )
   
-  # Reduce data to the team name, distance, final time (lap 3), average
+  # Reduce data to the team name, final time (lap 3), average
   # speed, and pdf file path.
   df <- df %>%
-    select(name, team, distance, time = lap_2, avg_speed_kph, path) %>%
+    select(name, team, time = lap_2, avg_speed_kph) %>%
     mutate(
       time = as.numeric(time),
-      avg_speed_kph = as.numeric(avg_speed_kph)
+      avg_speed_kph = as.numeric(avg_speed_kph),
+      pdf_path = path
     )
   
   return(df)
@@ -141,16 +123,35 @@ parse_sprint_matches <- function(path){
   df <- pdf_text(path) %>%
     paste(sep = " ", collapse = "") %>%
     readr::read_lines() %>% data_frame(raw = .)
+
+  # For final matches we need to clean the text to remove rows indicating the riders who
+  # did not qualify. We do this by finding the first row in the data frame which matches
+  # the string "Did not qualify", and removing all rows of df below this.
+  dnq_pos <- match("TRUE", str_detect(df$raw, "Did not qualify.*"))
+
+  if(is.na(dnq_pos) == FALSE){
+    df <- df[1:(dnq_pos - 1),]    
+  }
+
+  # Finals pdf files need to have medal results removed.
+  df <- df %>%
+    mutate(
+      raw = gsub("GOLD|SILVER|BRONZE", "", raw) %>% str_squish()
+    )
+
   
-  # Remove leading/trailing whitespace, and reduce multiple whitespaces to single spaces.
-  df <- df %>% mutate(raw = str_squish(raw))
+  # Remove rows of the file that have the date/communique number (otherwise some date
+  # strings are mistaken as results)
+  df <- df %>%
+    filter(!grepl(".*Communiqu", raw))
   
   # Reduce to rows which contain race timings. These are identified as they start with a
   # one or two digit number indicating qualifying position, followed by a two or three digit
   # rider number.
   df <- df %>%
     filter(grepl("^([0-9] ){0,1}[0-9 ]{0,1}[0-9]{2,3} ", raw))
-  
+
+    
   # Clean the raw text, removing race/rider id, separate raw into a name
   # and result component.
   df <- df %>% 
@@ -183,13 +184,13 @@ parse_sprint_matches <- function(path){
   df <- df %>%
     mutate(
       win_count = str_count(raw_result, "Winner"),
-      path = path
+      pdf_path = path
     )
   
   # Reduce data to the team name, distance, final time (lap 3), average
   # speed, and pdf file path.
   df <- df %>%
-    select(name, team, heat_id, win_count, path)
+    select(name, team, heat_id, win_count, pdf_path)
   
   return(df)
 }
