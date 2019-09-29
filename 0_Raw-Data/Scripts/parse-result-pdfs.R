@@ -20,13 +20,13 @@ race_lookup <- race_lookup %>%
 pmap(race_lookup %>% select(pdf_path, race, round,  csv_path),
   function(pdf_path, race, round,  csv_path){
 
-    if(race == "Men’s Team Sprint"){
+    if(race == "Team Sprint"){
       results_df <- parse_team_sprint(pdf_path)
     }
-    else if( (race == "Men’s Sprint") && (round == "Qualifying") ){
+    else if( (race == "Individual Sprint") && (round == "Qualifying") ){
       results_df <- parse_sprint_qualifying(pdf_path)
     }
-    else if( (race == "Men’s Sprint") && (round != "Qualifying")){
+    else if( (race == "Individual Sprint") && (round != "Qualifying")){
       results_df <- parse_sprint_matches(pdf_path)         
     }
     
