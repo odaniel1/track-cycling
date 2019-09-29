@@ -157,8 +157,8 @@ parse_sprint_matches <- function(path){
   df <- df %>% 
     mutate(
       raw = str_replace(raw,"^([0-9] ){0,1}[0-9 ]{0,1}[0-9]{2,3} ", ""),
-      raw_name = str_remove(raw, "Winner.*|\\+.*|REL.*") %>% trimws(),
-      raw_result = str_extract(raw, "Winner.*|\\+.*|REL.*") %>% trimws()
+      raw_name = str_remove(raw, "Winner.*|\\+.*|REL.*|DNF.*") %>% trimws(),
+      raw_result = str_extract(raw, "Winner.*|\\+.*|REL.*|DNF.*") %>% trimws()
     )
   # Create team and name fields.
   df <- df %>%
