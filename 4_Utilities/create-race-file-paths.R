@@ -5,6 +5,7 @@ race_pdf_path <- function(lookup_df){
       "./0_Raw-Data/Data/results-pdf/",
       event, "_",
       race, "_",
+      gender, "_",
       round, ".pdf"
     ),
     
@@ -22,6 +23,7 @@ race_csv_path <- function(lookup_df){
       "./0_Raw-Data/Data/results-csv/",
       event, "_",
       race, "_",
+      gender, "_",
       round, ".csv"
     ),
     
