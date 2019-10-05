@@ -69,7 +69,8 @@ prepare_match_sprint_data <- function(race_lookup){
         as_tibble(.),
         tibble( winner = c(rep(0,.$wins_0), rep(1,.$wins_1)) )
       )
-    )
+    ) %>%
+    ungroup()
 
   return(sprints_df)
 }
