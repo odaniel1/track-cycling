@@ -15,35 +15,19 @@ data {
 parameters {
   // Vector of ratings for each team. For us of a Dirichlet prior, ratings are constrained to 
   // sum to 1.
-  simplex[R] ratings;
+  simplex[R] rating;
 }
 
 transformed parameters {
    // The probability that rider 1 wins the given match, as defined by the Bradley-Terry model.
-  vector[M] prob_1_wins;
-  
-  for(m in 1:M){
-    prob_1_wins[m] = ratings[rider_id_1[m]] / (ratings[rider_id_0[m]] + ratings[rider_id_1[m]]);    
-  }
+  vector[R] log_rating;
+  log_rating = log(rating);
 }
 
 model {
-  ratings ~ dirichlet(alpha); // Dirichlet prior.
+  rating ~ dirichlet(alpha); // Dirichlet prior.
   
   // The Bradley-Terry model specifies that the probability that rider 1 wins is Bernoulli distributed
   // with success probabiliy determined by the ratings (prob_1_wins, defined above).
-  
-  for (m in 1:M){
-    outcome[m] ~ bernoulli(prob_1_wins[m]);
-  }
-}
-
-generated quantities {
-  // We calculate the (in-sample) log loss as an indicator of model fit.
-  real log_loss;
-  log_loss = 0.0;
-  
-  for(m in 1:M){
-    log_loss += outcome[m] * log(prob_1_wins[m]) +(1-outcome[m])*log(1 - prob_1_wins[m]);
-  }
+  outcome ~ bernoulli_logit(log_rating[rider_id_1] - log_rating[rider_id_0]);
 }

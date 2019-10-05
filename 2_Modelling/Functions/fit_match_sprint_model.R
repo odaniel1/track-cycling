@@ -1,35 +1,38 @@
 source("./1_Data-Processing/Functions/prepare_match_sprint_data.R")
 
-fit_match_sprint_model <- function(race_lookup){
-  
-  # Create individual data frame.
-  sprints_df <- prepare_match_sprint_data(race_lookup)
-  
+library(rstan)
+
+rstan_options(auto_write = TRUE)
+
+compile_match_sprint_model <- function(model_path){
+
+  compiled_model <- stan_model(model_path)
+  return(compiled_model)
+}
+ 
+fit_match_sprint_model <- function(match_pairs, compiled_model, prior_alpha){
+
   # Generate a rider data frame, with a row for each
   # unique rider.
-  rider_df <- tibble(rider_name = c(sprints_df$rider_0, sprints_df$rider_1)) %>%
+  rider_df <- tibble(rider_name = c(match_pairs$rider_0, match_pairs$rider_1)) %>%
   unique() %>%
   mutate(
       rider_id = 1:n()
   )
   
   # Add rider id to sprints data.
-  sprints_df <- sprints_df %>%
+  match_pairs <- match_pairs %>%
     left_join(rider_df, by = c("rider_0" = "rider_name")) %>% rename(rider_id_0 = rider_id) %>%
     left_join(rider_df, by = c("rider_1" = "rider_name")) %>% rename(rider_id_1 = rider_id)
-  
-  # Compile stan model for match sprints.
-  require(rstan)
-  compiled_model <- stan_model("./2_Modelling/bradley-terry-dirichlet.stan")
-  
+
   # Define model parameters.
   model_data <- list(
     R = nrow(rider_df),
-    M = nrow(sprints_df),
-    rider_id_0 = sprints_df$rider_id_0,
-    rider_id_1 = sprints_df$rider_id_1,
-    outcome = sprints_df$winner,
-    alpha = rep(1/2, nrow(rider_df))    
+    M = nrow(match_pairs),
+    rider_id_0 = match_pairs$rider_id_0,
+    rider_id_1 = match_pairs$rider_id_1,
+    outcome = match_pairs$winner,
+    alpha = rep(prior_alpha, nrow(rider_df))    
   )
   
   # Fit stan model.
@@ -39,27 +42,30 @@ fit_match_sprint_model <- function(race_lookup){
     iter = 2000,
     cores = 4,
     chains = 4,
-    control = list(adapt_delta = 0.95, max_treedepth = 10)
+    control = list(adapt_delta = 0.99, max_treedepth = 10)
   )
   
-  # Extract posterior samples.
-  posterior_samples <- extract(fitted_model)$ratings
-  colnames(posterior_samples) <- 1:nrow(rider_df)
+  model_pair <- list(stan_fit = fitted_model, rider_lookup = rider_df)
   
+  return(model_pair)
+}
+
+# Extract posterior samples.
+extract_ratings <- function(model_pair){
+
+  posterior_samples <- extract(model_pair$stan_fit)$rating
+  colnames(posterior_samples) <- 1:nrow(model_pair$rider_lookup)
   
   posterior_samples <- posterior_samples %>%
     as_tibble %>%
     mutate(sample_id = 1:n()) %>%
     
     # Convert to long format.
-    gather("rider_id", "ranking", -sample_id) %>%
+    gather("rider_id", "rating", -sample_id) %>%
     
     # Add rider name from rider_df
     mutate(rider_id = as.numeric(rider_id)) %>%
-    left_join(rider_df) %>%
+    left_join(model_pair$rider_lookup) %>%
     
-    select(sample_id, rider_name, ranking)
-
-  
-  return(posterior_samples)
+    select(sample_id, rider_name, rating)
 }
