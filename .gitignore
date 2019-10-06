@@ -5,4 +5,5 @@
 track-cycling.Rproj
 0_Raw-Data/Data
 0_Raw-Data/Functions/generate_race_lookup.R
-2_Modelling/Stan_Models/**.rds
+2_Modelling/Stan-Models/**.rds
+**sandbox
