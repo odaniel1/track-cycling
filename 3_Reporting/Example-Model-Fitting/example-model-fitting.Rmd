@@ -108,12 +108,12 @@ race_lookup <- generate_race_lookup() %>%
     location_country != "Poland",
     race == "Individual Sprint",
     gender == "Men",
-    round != "Qualifying"
+    !(round %in% c("Qualifying", "1-16 Finals", "1-8 Finals"))
   )
 ```
 
 # Running Stan models
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, results="hide"}
 source("./2_Modelling/Functions/fit_stan_models.R")
 dirichlet_path <- "./2_Modelling/Stan-Models/Bradley-Terry-Dirichlet"
 dirichlet_model <- compile_model(dirichlet_path)
@@ -132,7 +132,7 @@ colnames(samples) <- 1:ncol(samples)
 samples <- samples %>%
   as_tibble %>%
   mutate(sample_id = 1:n()) %>%
-  gather("rider_id", "ranking", -sample_id) %>%
+  gather("rider_id", "rating", -sample_id) %>%
   mutate(rider_id = as.numeric(rider_id))
 ```
 We now add the rider lookup which was in the initial model parameters.
@@ -143,16 +143,51 @@ samples <- samples %>% left_join(dirichlet_fit$parameters$riders)
 Finally we will produce a summary of the data.
 ```{r}
 rider_rankings <- samples %>%
-  group_by(rider) %>%
+  group_by(rider, rider_id) %>%
   summarise(
-    ranking_10 = quantile(ranking, 0.1),
-    ranking_50 = quantile(ranking, 0.5),
-    ranking_90 = quantile(ranking, 0.9)
+    ranking_10 = quantile(rating, 0.1),
+    ranking_50 = quantile(rating, 0.5),
+    ranking_90 = quantile(rating, 0.9)
   )
 
-rider_rankings %>% arrange(desc(ranking_50)) %>% head(10)
+rider_rankings %>% arrange(desc(ranking_50)) %>% head(20)
+
 ```
 
+# Evaluating model performance
+```{r, message = FALSE, warning = FALSE}
+race_lookup <- generate_race_lookup() %>%
+    filter(
+    season == "2018/19",
+    location_country == "Poland",
+    race == "Individual Sprint",
+    gender == "Men",
+    !(round %in% c("Qualifying", "1-16 Finals", "1-8 Finals"))
+  )
+
+test_sprints <- format_individual_sprint_data(race_lookup)$sprints
+
+test_sprints <- test_sprints %>%
+  crossing(sample_id =1:8000)
+
+test_sprints <- test_sprints %>%
+  left_join(samples %>% select(sample_id, rider_0 = rider, rating_0 = rating )) %>%
+  left_join(samples %>% select(sample_id, rider_1 = rider, rating_1 = rating ))
+
+test_sprints <- test_sprints %>%
+  mutate(
+    prob_1_wins = rating_1 / (rating_1 + rating_0),
+    log_loss = ifelse(winner == 1, log(prob_1_wins), log(1-prob_1_wins))
+  )
+
+log_loss_samples <- test_sprints %>% group_by(sample_id) %>%
+  summarise(
+    mean_log_loss = mean(log_loss, na.rm = TRUE)
+  )
+
+ggplot(log_loss_samples, aes(mean_log_loss)) + geom_histogram() +
+  geom_vline(xintercept = log(0.5), linetype = 'dashed', color = 'hotpink')
+```
 
 # Session information  {-}
 
