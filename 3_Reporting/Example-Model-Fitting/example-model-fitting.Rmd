@@ -108,7 +108,7 @@ race_lookup <- generate_race_lookup() %>%
     location_country != "Poland",
     race == "Individual Sprint",
     gender == "Men",
-    !(round %in% c("Qualifying", "1-16 Finals", "1-8 Finals"))
+    !(round %in% c("Qualifying"))
   )
 ```
 
@@ -162,7 +162,7 @@ race_lookup <- generate_race_lookup() %>%
     location_country == "Poland",
     race == "Individual Sprint",
     gender == "Men",
-    !(round %in% c("Qualifying", "1-16 Finals", "1-8 Finals"))
+    !(round %in% c("Qualifying"))
   )
 
 test_sprints <- format_individual_sprint_data(race_lookup)$sprints
@@ -189,6 +189,19 @@ ggplot(log_loss_samples, aes(mean_log_loss)) + geom_histogram() +
   geom_vline(xintercept = log(0.5), linetype = 'dashed', color = 'hotpink')
 ```
 
+```{r}
+ggplot(test_sprints, aes(round, log_loss)) + geom_boxplot() +
+  coord_cartesian(ylim = c(-1.5,0)) +
+  geom_hline(yintercept = log(0.5), linetype = 'dashed', color = 'hotpink') +
+  geom_hline(
+    yintercept = mean(log_loss_samples$mean_log_loss),
+    linetype = "dashed", color = "blue"
+  ) +
+  geom_hline(
+    yintercept = median(log_loss_samples$mean_log_loss),
+    color = "blue"
+  )
+```
 # Session information  {-}
 
 <div style="font-size:90%">
@@ -196,4 +209,3 @@ ggplot(log_loss_samples, aes(mean_log_loss)) + geom_histogram() +
 sessionInfo()
 ```
 </div>
-o
