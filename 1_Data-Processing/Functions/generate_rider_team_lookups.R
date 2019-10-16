@@ -1,9 +1,14 @@
 generate_rider_lookup <- function(matches){
-  
+
   riders <- matches %>%
-    select(rider = name) %>%
-    unique() %>%
-    mutate(rider_id = 1:n())
+    select(rider = name, round) %>%
+    group_by(rider) %>%
+    slice(which.max(round)) %>%
+    ungroup() %>%
+    mutate(
+      round_id = as.numeric(round),
+      rider_id = 1:n()
+    )
 
   return(riders)
 }
