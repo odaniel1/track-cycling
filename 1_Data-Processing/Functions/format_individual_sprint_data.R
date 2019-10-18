@@ -19,6 +19,12 @@ format_individual_sprint_data <- function(race_lookup){
       match_id = paste(heat_id, round, gender, location, event, sep = "_"),
       rider_no = rep(0:1, n()/2)
     )
+  
+  # Convert round data to factor.
+  matches <- matches %>%
+    mutate(
+      round = factor(round, levels = c("1-16 Finals", "1-8 Finals", "Quarterfinals", "Semifinals", "Finals"))
+    )
 
   # # Create rider lookup data.
   # rider_lookup <- generate_rider_lookup(matches)
