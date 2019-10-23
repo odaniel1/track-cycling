@@ -1,8 +1,8 @@
-source("./1_Data-Processing/Functions/format_individual_sprint_data.R")
+source("./1_Data-Processing/Functions/format_match_sprint_data.R")
 
 model_parameters <- function(race_lookup){
- 
-  sprints <- format_individual_sprint_data(race_lookup)
+  
+  sprints <- format_match_sprint_data(race_lookup)
   
   parameters <- list(
     R = nrow(sprints$riders),
