@@ -1,4 +1,4 @@
-source("./1_Data-Processing/Functions/format_qualifying_sprint_data.R")
+source("./1_Data-Processing/Functions/format_individual_sprint_data.R")
 
 model_parameters <- function(race_lookup){
   
