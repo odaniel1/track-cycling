@@ -76,18 +76,18 @@ parse_sprint_qualifying <- function(path){
       raw = str_replace(raw,"[0-9]{1,2} [0-9]{1,3}", "")
     )
   
-  # Separate raw into a name component, and result component.
+  # Separate raw into an identifier component, and result component.
   df <- df %>%
     mutate(
-      raw_name = str_replace(raw, " [0-9].*", "") %>% trimws(),
-      raw_result = str_replace(raw, raw_name, "") %>% trimws()
+      raw_identifier = str_replace(raw, " [0-9].*", "") %>% trimws(),
+      raw_result = str_replace(raw, raw_identifier, "") %>% trimws()
     )
   
-  # Create team and name fields.
+  # Create rider and team fields.
   df <- df %>%
     mutate(
-      name = substr(raw_name, 1, nchar(raw_name) - 3) %>% trimws(),
-      team = str_replace(raw_name, name, "") %>% trimws()
+      rider = substr(raw_identifier, 1, nchar(raw_identifier) - 3) %>% trimws(),
+      team = str_replace(raw_identifier, rider, "") %>% trimws()
     )
   
   # Clean raw_result field, removing all text before bracketed figures, which denote
@@ -108,7 +108,7 @@ parse_sprint_qualifying <- function(path){
   # Reduce data to the team name, final time (lap 3), average
   # speed, and pdf file path.
   df <- df %>%
-    select(name, team, time, avg_speed_kph) %>%
+    select(rider, team, time, avg_speed_kph) %>%
     mutate(
       time = as.numeric(time),
       avg_speed_kph = as.numeric(avg_speed_kph),
@@ -158,14 +158,14 @@ parse_sprint_matches <- function(path){
   df <- df %>% 
     mutate(
       raw = str_replace(raw,"^([0-9] ){0,1}[0-9 ]{0,1}[0-9]{2,3} ", ""),
-      raw_name = str_remove(raw, "Winner.*|\\+.*|REL.*|DNF.*|DNS.*") %>% trimws(),
+      raw_identifier = str_remove(raw, "Winner.*|\\+.*|REL.*|DNF.*|DNS.*") %>% trimws(),
       raw_result = str_extract(raw, "Winner.*|\\+.*|REL.*|DNF.*|DNS.*") %>% trimws()
     )
   # Create team and name fields.
   df <- df %>%
     mutate(
-      name = substr(raw_name, 1, nchar(raw_name) - 3) %>% trimws(),
-      team = str_replace(raw_name, name, "") %>% trimws()
+      rider = substr(raw_identifier, 1, nchar(raw_identifier) - 3) %>% trimws(),
+      team = str_replace(raw_identifier, rider, "") %>% trimws()
     )
   
   # Clean raw_result field, removing bracketed figures (lap position).
@@ -191,7 +191,7 @@ parse_sprint_matches <- function(path){
   # Reduce data to the team name, distance, final time (lap 3), average
   # speed, and pdf file path.
   df <- df %>%
-    select(name, team, heat_id, win_count, pdf_path)
+    select(rider, team, heat_id, win_count, pdf_path)
   
   return(df)
 }

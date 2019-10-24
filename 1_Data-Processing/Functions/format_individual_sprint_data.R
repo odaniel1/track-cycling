@@ -81,8 +81,8 @@ generate_wide_match_sprints_data <- function(matches){
   # each rider.
   
   # Generate rider columns.
-  rider_cols <- matches %>% select(match_id, round, rider_no, name) %>% 
-    spread(rider_no, name) %>%
+  rider_cols <- matches %>% select(match_id, round, rider_no, rider) %>% 
+    spread(rider_no, rider) %>%
     rename(rider_0 = `0`, rider_1 = `1`)
   
   # Generate team columns.
@@ -129,7 +129,7 @@ format_qualifying_sprint_data <- function(race_lookup){
   
   
   # Add rider and event lookups.
-  riders <- sprints %>% select(name) %>% unique() %>%
+  riders <- sprints %>% select(rider) %>% unique() %>%
     mutate(rider_id = 1:n() )
   
   events <- sprints %>% select(event, location) %>% unique() %>%
