@@ -59,7 +59,7 @@ parse_sprint_qualifying <- function(path){
   # Parse pdf to a string.
   df <- pdf_text(path) %>%
     paste(sep = " ", collapse = "")%>%
-    readr::read_lines() %>% data_frame(raw = .)
+    readr::read_lines() %>% tibble(raw = .)
   
   # Remove leading/trailing whitespace, and reduce multiple whitespaces to single spaces.
   df <- df %>% mutate(raw = str_squish(raw))
@@ -90,24 +90,25 @@ parse_sprint_qualifying <- function(path){
       team = str_replace(raw_name, name, "") %>% trimws()
     )
   
-  # Clean raw_result field, removing bracketed figures (lap position).
+  # Clean raw_result field, removing all text before bracketed figures, which denote
+  # position after the first lap; this should leave overall time, and average speed.
   df <- df %>%
     mutate(
-      raw_result =  gsub("\\([0-9]{1,2}\\)", "", raw_result) %>% str_squish()
+      raw_result =  gsub(".*\\([0-9]{1,2}\\)", "", raw_result) %>% str_squish()
     )
   
   # Separate raw result into lap times, and average speed.
   df <- df %>%
     separate(
       raw_result,
-      into = c("lap_1", "lap_2", "avg_speed_kph"),
+      into = c("time", "avg_speed_kph"),
       sep = " "
     )
   
   # Reduce data to the team name, final time (lap 3), average
   # speed, and pdf file path.
   df <- df %>%
-    select(name, team, time = lap_2, avg_speed_kph) %>%
+    select(name, team, time, avg_speed_kph) %>%
     mutate(
       time = as.numeric(time),
       avg_speed_kph = as.numeric(avg_speed_kph),
