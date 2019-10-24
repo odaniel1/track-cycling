@@ -21,10 +21,10 @@ fit_model <- function(race_lookup, compiled_model, model_path){
   fitted_model <- sampling(
     object = compiled_model,
     data = model_parameters$stan_parameters,
-    iter = 4000,
-    cores = 4,
-    chains = 4,
-    control = list(adapt_delta = 0.995)
+    iter = 3000,
+    cores = 6,
+    chains = 6,
+    control = list(adapt_delta = 0.997)
   )
 
   return(model = list(stan_fit = fitted_model, parameters = model_parameters))
