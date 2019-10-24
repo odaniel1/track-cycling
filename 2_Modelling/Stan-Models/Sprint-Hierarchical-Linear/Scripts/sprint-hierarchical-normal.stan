@@ -19,7 +19,6 @@ parameters {
 
   real<lower=0> hyp_sigma_rider;
   vector[R] mu_rider;
-  real<lower=0> sigma_rider;
 
   real<lower=0> tau;
 }
