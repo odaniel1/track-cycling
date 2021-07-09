@@ -11,7 +11,7 @@ list(
   
   ## ---- LOCAL PATHS ---------------------------------------------------------
   
-  tar_target(race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv"),
+  tar_target(race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
 
   
   ## ---- DATA PREPARATION ----------------------------------------------------
@@ -35,6 +35,16 @@ list(
     name = bt1,
     stan_files = "stan/bt1.stan",
     data = stan_data,
+    variables = c("sigma", "alpha", "avg_log_loss"),
+    iter_warmup = 1000, iter_sampling = 1000,
+    parallel_chains = 4
+  ),
+  
+  tar_stan_mcmc(
+    name = bt1.1,
+    stan_files = "stan/bt1.1.stan",
+    data = stan_data,
+    variables = c("sigma", "alpha", "avg_log_loss", "avg_match_log_loss"),
     iter_warmup = 1000, iter_sampling = 1000,
     parallel_chains = 4
   ),
@@ -43,6 +53,7 @@ list(
     name = bt2,
     stan_files = "stan/bt2.stan",
     data = stan_data,
+    variables = c("sigma", "alpha", "avg_log_loss", "avg_match_log_loss"),
     iter_warmup = 1000, iter_sampling = 1000,
     parallel_chains = 4
   )

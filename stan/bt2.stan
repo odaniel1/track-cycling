@@ -10,6 +10,14 @@ functions {
         return binomial_logit_lpmf(2 | 3, alpha) - log(3) + log(2);
     }
   }
+    real match_log_loss(int[] s, vector alpha){
+    for(n in 1:num_elements(s)){
+      if (s[n] == 1)
+        return -binomial_logit_lpmf(1 | 1, alpha);
+      else
+        return -log_sum_exp(binomial_logit_lpmf(2 | 2, alpha),  binomial_logit_lpmf(2 | 3, alpha) - log(3) + log(2));
+    }
+  }
 }
 
 data {
@@ -21,11 +29,23 @@ data {
 }
 
 parameters {
-  // rating vector
+  // rider ratings
+  real<lower=0> sigma;
   vector[R] alpha;
 }
 
+transformed parameters {
+  // difference of winner and loser rating
+  vector[M] delta = alpha[winner_id] - alpha[loser_id];
+}
+
 model {
-  alpha ~ normal(0,1); 
-  sprints ~ match_logit(alpha[winner_id] - alpha[loser_id]);
+  sigma ~ student_t(3,0,1);
+  alpha ~ normal(0,sigma); 
+  sprints ~ match_logit(delta);
+}
+
+generated quantities {
+  real avg_log_loss = -inv(M) * bernoulli_logit_lpmf(1 | delta);
+  real avg_match_log_loss = inv(M) * match_log_loss(sprints,  delta);
 }

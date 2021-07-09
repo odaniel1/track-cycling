@@ -18,10 +18,11 @@ prepare_races <- function(path){
   
   races <- read_csv(path) %>%
     filter(
+      csv_cached == TRUE,
       season %in% c("2019/20", "2018/19"),
-      race == 'Individual Sprint',
-      gender == 'Men',
-      round != 'Qualifying'
+      race   ==   'Individual Sprint',
+      gender ==   'Women',
+      round  !=   'Qualifying'
     ) %>%
     left_join(location_lookup())
   
