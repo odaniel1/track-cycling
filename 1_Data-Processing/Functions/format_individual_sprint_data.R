@@ -24,7 +24,7 @@ format_match_sprint_data <- function(race_lookup){
   # Convert round data to factor.
   matches <- matches %>%
     mutate(
-      round = factor(round, levels = c("1-16 Finals", "1-8 Finals", "Quarterfinals", "Semifinals", "Finals"))
+      round = factor(round, levels = c("Qualifying", "1-16 Finals", "1-8 Finals", "Quarterfinals", "Semifinals", "Finals"))
     )
   
   # # Create rider lookup data.
