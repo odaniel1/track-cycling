@@ -2,12 +2,12 @@
 // https://github.com/stan-dev/example-models/blob/master/knitr/bradley-terry/individual.stan
 
 functions {
-    real match_log_loss(int[] s, vector alpha){
+    real match_log_loss(int[] s, vector alpha0){
     for(n in 1:num_elements(s)){
       if (s[n] == 1)
-        return -binomial_logit_lpmf(1 | 1, alpha);
+        return -binomial_logit_lpmf(1 | 1, alpha0);
       else
-        return -log_sum_exp(binomial_logit_lpmf(2 | 2, alpha),  binomial_logit_lpmf(2 | 3, alpha) - log(3) + log(2));
+        return -log_sum_exp(binomial_logit_lpmf(2 | 2, alpha0),  binomial_logit_lpmf(2 | 3, alpha0) - log(3) + log(2));
     }
   }
 }
@@ -23,17 +23,17 @@ data {
 parameters {
   // rider ratings
   real<lower=0> sigma;
-  vector[R] alpha;
+  vector[R] alpha0;
 }
 
 transformed parameters {
   // difference of winner and loser rating
-  vector[M] delta = alpha[winner_id] - alpha[loser_id];
+  vector[M] delta = alpha0[winner_id] - alpha0[loser_id];
 }
 
 model {
   sigma ~ student_t(3,0,1);
-  alpha ~ normal(0,sigma); 
+  alpha0 ~ normal(0,sigma); 
   1 ~ bernoulli_logit(delta);
 }
 

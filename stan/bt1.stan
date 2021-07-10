@@ -11,20 +11,20 @@ data {
 parameters {
   // rider ratings
   real<lower=0> sigma;
-  vector[R] alpha;
+  vector[R] alpha0;
 }
 
 transformed parameters {
   // difference of winner and loser rating
-  vector[M] delta = alpha[winner_id] - alpha[loser_id];
+  vector[M] delta = alpha0[winner_id] - alpha0[loser_id];
 }
 
 model {
   sigma ~ student_t(3,0,1);
-  alpha ~ normal(0,sigma); 
+  alpha0 ~ normal(0,sigma); 
   1 ~ bernoulli_logit(delta);
 }
 
 generated quantities {
-  real avg_log_loss = -inv(M) * bernoulli_logit_lpmf(1 | alpha[winner_id] - alpha[loser_id]);
+  real avg_log_loss = -inv(M) * bernoulli_logit_lpmf(1 | alpha0[winner_id] - alpha0[loser_id]);
 }
