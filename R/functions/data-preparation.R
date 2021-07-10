@@ -19,10 +19,10 @@ prepare_races <- function(path){
   races <- read_csv(path) %>%
     filter(
       csv_cached == TRUE,
-      season %in% c("2019/20", "2018/19"),
+      season %in% c("2018/19", "2019/20"),
       race   ==   'Individual Sprint',
       gender ==   'Women',
-      round  !=   'Qualifying'
+      round  !=   'Qualifying',
     ) %>%
     left_join(location_lookup())
   
@@ -43,9 +43,9 @@ prepare_results <- function(races_df){
   
   results <- results %>%
     mutate(
-      date_sc = as.numeric(date - min(date))/365
+      round = factor(round, levels = c("1-16 Finals", "1-8 Finals", "Quarterfinals", "Semifinals", "Finals"))
     )
-  
+
   return(results)
 }
 
@@ -61,19 +61,46 @@ prepare_riders <- function(results_df){
   return(riders)
 }
 
-prepare_matches <- function(results_df, riders_df){
+prepare_rider_days <- function(results_df, riders_df){
+  
+  rider_days <- results_df %>%
+    left_join(riders_df, by = c("rider" = "rider_name")) %>%
+    distinct(rider_id, date) %>%
+    arrange(rider_id, date) %>%
+    group_by(rider_id) %>%
+    mutate(
+      rider_date_no = 1:n() - 1,
+      days_to_prev = as.numeric(date - lag(date,1)),
+      days_to_prev = if_else(is.na(days_to_prev),0,days_to_prev)
+    ) %>%
+    ungroup()
+  
+  return(rider_days)
+  
+}
+
+prepare_matches <- function(results_df, riders_df, days_df){
   
   matches <- results_df %>%
+    # reformat in wide: one row per match, and add rider names
     pivot_wider(names_from = c(seed), values_from = c(team, rider, win_count)) %>%
     left_join(riders_df %>% rename(rider_seed_1 = rider_name, rider_id_seed_1 = rider_id)) %>%
     left_join(riders_df %>% rename(rider_seed_2 = rider_name, rider_id_seed_2 = rider_id)) %>%
-    rename_with(~str_remove(., "seed_")) %>%
+    rename_with(~str_remove(., "seed_"))
+  
+  # identify rider id of winning/losing rider and no. sprints in match
+  matches <- matches %>%
     mutate(
       winner_id = if_else(win_count_1 > win_count_2, rider_id_1, rider_id_2),
       loser_id  = if_else(win_count_1 > win_count_2, rider_id_2, rider_id_1),
       sprints = win_count_1 + win_count_2
     )
   
+  # add the winner/loser date index
+  matches <- matches %>%
+    left_join(days_df %>% select(rider_id, date, winner_date_no = rider_date_no), by = c("winner_id" = "rider_id", "date" = "date")) %>%
+    left_join(days_df %>% select(rider_id, date, loser_date_no = rider_date_no), by = c("loser_id" = "rider_id", "date" = "date"))
+
   return(matches)
 }
 
