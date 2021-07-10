@@ -10,72 +10,84 @@ functions {
         return binomial_logit_lpmf(2 | 3, alpha) - log(3) + log(2);
     }
   }
+    real match_log_loss(int[] s, vector alpha){
+    for(n in 1:num_elements(s)){
+      if (s[n] == 1)
+        return -binomial_logit_lpmf(1 | 1, alpha);
+      else
+        return -log_sum_exp(binomial_logit_lpmf(2 | 2, alpha),  binomial_logit_lpmf(2 | 3, alpha) - log(3) + log(2));
+    }
+  }
 }
 
 data {
   int<lower=0> R; // Riders
   int<lower=0> M; // Matches
-  int<lower=0> P; // Pairings
+  int<lower=0> D; // Dates
+  int<lower=0> Z; // No. Riders with multiple dates
   int<lower=1,upper=R> winner_id[M]; // ID's specifying riders in match
   int<lower=1,upper=R> loser_id[M];
-  int<lower=1,upper=R> pairings[P,2];
   int<lower=1,upper=3> sprints[M];
+  int<lower=0> winner_date_no[M];
+  int<lower=0> loser_date_no[M];
+  int<lower=0> date_diffs[D];
+  int<lower=0> date_diffs_rider_pos[R];
 }
 
-transformed data {
-  real<lower=0> scale_icept =1; // prior std for the intercept
-  real<lower=0> scale_global=1 ; // scale for the half -t prior for tau
-  real<lower=1> nu_global =1; // degrees of freedom for the half -t priors for tau
-  real<lower=1> nu_local =1; // degrees of freedom for the half - t priors for lambdas
-  real<lower=0> slab_scale = 0.5; // slab scale for the regularized horseshoe
-  real<lower=0> slab_df = 25; // slab degrees of freedom for the regularized horseshoe
-}
+// transformed data {
+//   int z = 1;
+// }
 
 parameters {
-  // rating vector
-  vector[R] alpha;
-  // parameters for horsehoe pair effect
-  vector[P] z;
-  real<lower=0> aux1_global ;
-  real<lower=0> aux2_global ;
-  vector<lower=0>[P] aux1_local ;
-  vector<lower=0>[P] aux2_local ;
-  real<lower=0> caux ;
+  // rider ratings
+  real<lower=0> sigma;
+  real<lower=0> tau;
+  vector[R] alpha0;
+  vector[Z] zeta;
 }
 
 transformed parameters {
-  vector[P] gamma;
-  matrix[R,R] gamma_mat = rep_matrix(0, R, R);
-  vector[M] mu;
-  real<lower=0> tau;
-  vector<lower=0>[P] lambda ; // local shrinkage parameter
-  vector<lower=0>[P] lambda_tilde ; // ’ truncated ’ local shrinkage parameter
-  real<lower=0>c; // slab scale
-  lambda = aux1_local .* sqrt ( aux2_local );
-  tau = aux1_global * sqrt ( aux2_global ) * scale_global;
-  c = slab_scale * sqrt ( caux );
-  lambda_tilde = sqrt ( c ^2 * square ( lambda ) ./ (c ^2 + tau ^2* square ( lambda )) );
-  gamma = z .* lambda_tilde * tau ;
-
+  vector[D] alpha;
+  vector[M] delta;
+  {
+  int z = 1;
   
-  for(p in 1:P){
-    gamma_mat[pairings[p,1], pairings[p,2]] =  gamma[p];
-    gamma_mat[pairings[p,2], pairings[p,1]] = -gamma[p];
+  for(r in 1:R-1){
+    for(s in date_diffs_rider_pos[r]:date_diffs_rider_pos[r+1]-1){
+      if(s == date_diffs_rider_pos[r]){
+        alpha[s] = alpha0[r];
+    }
+      else{
+        alpha[s] = alpha[s-1] + sqrt(date_diffs[s]* inv(365)) * zeta[z];
+        z+=1;
+      }
+    }
   }
   
+    for(s in date_diffs_rider_pos[R]:D){
+      if(s ==date_diffs_rider_pos[R])
+        alpha[s] = alpha0[R];
+      else
+        alpha[s] = alpha[s-1] + sqrt(date_diffs[s]/365) * zeta[z];
+    }
+    
   for(m in 1:M){
-    mu[m] =  alpha[winner_id[m]] - alpha[loser_id[m]] + gamma_mat[winner_id[m], loser_id[m]];
+    delta[m] = alpha[date_diffs_rider_pos[winner_id[m]] + winner_date_no[m]] - 
+    alpha[date_diffs_rider_pos[loser_id[m]] + loser_date_no[m]];
+  }
   }
 }
 
+
 model {
-  z ~ normal (0 , 1);
-  aux1_local ~ normal (0 , 1);
-  aux2_local ~ inv_gamma (0.5* nu_local , 0.5* nu_local );
-  aux1_global ~ normal (0 , 1);
-  aux2_global ~ inv_gamma (0.5* nu_global , 0.5* nu_global );
-  caux ~ inv_gamma (0.5* slab_df , 0.5* slab_df );
-  
-  alpha ~ normal(0,1);
-  sprints ~ match_logit(mu);
+  sigma ~ student_t(3,0,1);
+  tau ~ student_t(3,0,1);
+  alpha0 ~ normal(0,sigma);
+  zeta ~ normal(0,tau);
+  sprints ~ match_logit(delta);
+}
+
+generated quantities {
+  real avg_log_loss = -inv(M) * bernoulli_logit_lpmf(1 | delta);
+  real avg_match_log_loss = inv(M) * match_log_loss(sprints,  delta);
 }
