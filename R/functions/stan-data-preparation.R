@@ -20,6 +20,8 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     sprints = matches_df$sprints, # No. Sprints in match, models >= 2.0
     winner_date_no = matches_df$winner_date_no,
     loser_date_no = matches_df$loser_date_no,
+    winner_at_home = matches_df$winner_at_home,
+    loser_at_home = matches_df$loser_at_home,
     date_diffs_rider_pos = date_diffs_rider_pos$pos,
     date_diffs = days_df$days_to_prev
   )

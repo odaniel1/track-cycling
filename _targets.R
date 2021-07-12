@@ -12,6 +12,8 @@ list(
   ## ---- LOCAL PATHS ---------------------------------------------------------
   
   tar_target(race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
+  
+  tar_target(team_path, "../tissot-scraper/data/team-lookup.csv", format = 'file'),
 
   ## ---- DATA PREPARATION ----------------------------------------------------
   
@@ -19,11 +21,13 @@ list(
   
   tar_target(results, prepare_results(races)),
 
+  tar_target(teams, prepare_teams(team_path, results)),
+  
   tar_target(riders, prepare_riders(results)),
   
   tar_target(rider_days, prepare_rider_days(results, riders)),
 
-  tar_target(matches, prepare_matches(results, riders, rider_days)),
+  tar_target(matches, prepare_matches(results, riders, rider_days, teams)),
   
   tar_target(pairings, prepare_pairings(matches)),
   
@@ -36,8 +40,8 @@ list(
     name = bt1,
     stan_files = "stan/bt1.stan",
     data = stan_data,
-    variables = c("sigma", "alpha", "avg_log_loss"),
-    iter_warmup = 1000, iter_sampling = 1000,
+    variables = c("sigma", "alpha0", "avg_log_loss"),
+    iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
     refresh = 500
@@ -47,8 +51,8 @@ list(
     name = bt1.1,
     stan_files = "stan/bt1.1.stan",
     data = stan_data,
-    variables = c("sigma", "alpha", "avg_log_loss", "avg_match_log_loss"),
-    iter_warmup = 1000, iter_sampling = 1000,
+    variables = c("sigma", "alpha0", "avg_log_loss", "avg_match_log_loss"),
+    iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
     refresh = 500
@@ -58,8 +62,8 @@ list(
     name = bt2,
     stan_files = "stan/bt2.stan",
     data = stan_data,
-    variables = c("sigma", "alpha", "avg_log_loss", "avg_match_log_loss"),
-    iter_warmup = 1000, iter_sampling = 1000,
+    variables = c("sigma", "alpha0", "avg_log_loss", "avg_match_log_loss"),
+    iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
     refresh = 500
@@ -70,7 +74,18 @@ list(
     stan_files = "stan/bt3.stan",
     data = stan_data,
     variables = c("sigma", "tau","zeta", "alpha0", "alpha", "avg_log_loss", "avg_match_log_loss"),
-    iter_warmup = 1000, iter_sampling = 1000,
+    iter_warmup = 999, iter_sampling = 1000,
+    parallel_chains = 4,
+    seed = 1414214,
+    refresh = 500
+  ),
+  
+  tar_stan_mcmc(
+    name = bt4,
+    stan_files = "stan/bt4.stan",
+    data = stan_data,
+    variables = c("sigma", "tau","eta_theta",  "upsilon", "alpha0", "alpha", "avg_log_loss", "avg_match_log_loss"),
+    iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
     refresh = 500

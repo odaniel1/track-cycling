@@ -10,7 +10,11 @@ location_lookup <- function(){
     "New Zealand","NZL",
     "Poland",    "POL",
     "United Kingdom", "GBR",
-    "Russia",    "RUS"
+    "Russia",    "RUS",
+    "Chile", "CHL",
+    "Netherlands", "NED",
+    "Indonesia", "IDN",
+    "Switzerland", "CHE"
   )
 }
 
@@ -19,7 +23,6 @@ prepare_races <- function(path){
   races <- read_csv(path) %>%
     filter(
       csv_cached == TRUE,
-      season %in% c("2018/19", "2019/20"),
       race   ==   'Individual Sprint',
       gender ==   'Women',
       round  !=   'Qualifying',
@@ -47,6 +50,19 @@ prepare_results <- function(races_df){
     )
 
   return(results)
+}
+
+prepare_teams <- function(path, results_df){
+  
+  team_lookup <- read_csv(path) %>%
+    distinct(team_code, country_code)
+
+  teams <- results_df %>%
+    distinct(team) %>%
+    left_join(team_lookup, by = c("team" = "team_code")) %>%
+    mutate(country_code = coalesce(country_code, team))
+  
+  return(teams)
 }
 
 prepare_riders <- function(results_df){
@@ -79,7 +95,7 @@ prepare_rider_days <- function(results_df, riders_df){
   
 }
 
-prepare_matches <- function(results_df, riders_df, days_df){
+prepare_matches <- function(results_df, riders_df, days_df, team_df){
   
   matches <- results_df %>%
     # reformat in wide: one row per match, and add rider names
@@ -101,6 +117,18 @@ prepare_matches <- function(results_df, riders_df, days_df){
     left_join(days_df %>% select(rider_id, date, winner_date_no = rider_date_no), by = c("winner_id" = "rider_id", "date" = "date")) %>%
     left_join(days_df %>% select(rider_id, date, loser_date_no = rider_date_no), by = c("loser_id" = "rider_id", "date" = "date"))
 
+  # add indicator of winner/loser home game
+  matches <- matches %>%
+    left_join(team_df %>% select(team_1 = team, country_code_1 = country_code)) %>%
+    left_join(team_df %>% select(team_2 = team, country_code_2 = country_code)) %>%
+    mutate(
+      winner_at_home = if_else(win_count_1 > win_count_2, 1 * (location_country_code == country_code_1),1 * (location_country_code == country_code_2)),
+      loser_at_home = if_else(win_count_2 > win_count_1, 1 * (location_country_code == country_code_2),1 * (location_country_code == country_code_2)),
+    )
+  
+  matches <- matches %>%
+    filter(!is.na(rider_1) & !is.na(rider_2))
+  
   return(matches)
 }
 
