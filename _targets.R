@@ -40,7 +40,6 @@ list(
     name = bt1,
     stan_files = "stan/bt1.stan",
     data = stan_data,
-    variables = c("sigma", "alpha0", "avg_log_loss"),
     iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
@@ -51,7 +50,6 @@ list(
     name = bt1.1,
     stan_files = "stan/bt1.1.stan",
     data = stan_data,
-    variables = c("sigma", "alpha0", "avg_log_loss", "avg_match_log_loss"),
     iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
@@ -62,18 +60,6 @@ list(
     name = bt2,
     stan_files = "stan/bt2.stan",
     data = stan_data,
-    variables = c("sigma", "alpha0", "avg_log_loss", "avg_match_log_loss"),
-    iter_warmup = 999, iter_sampling = 1000,
-    parallel_chains = 4,
-    seed = 1414214,
-    refresh = 500
-  ),
-
-  tar_stan_mcmc(
-    name = bt3,
-    stan_files = "stan/bt3.stan",
-    data = stan_data,
-    variables = c("sigma", "tau","zeta", "alpha0", "alpha", "avg_log_loss", "avg_match_log_loss"),
     iter_warmup = 999, iter_sampling = 1000,
     parallel_chains = 4,
     seed = 1414214,
@@ -81,12 +67,11 @@ list(
   ),
   
   tar_stan_mcmc(
-    name = bt4,
-    stan_files = "stan/bt4.stan",
+    name = bt3.2,
+    stan_files = "stan/bt3.2.stan",
     data = stan_data,
-    variables = c("sigma", "tau","eta_theta",  "upsilon", "alpha0", "alpha", "avg_log_loss", "avg_match_log_loss"),
     iter_warmup = 999, iter_sampling = 1000,
-    parallel_chains = 4,
+    parallel_chains = 4, chains = 4,
     seed = 1414214,
     refresh = 500
   )
