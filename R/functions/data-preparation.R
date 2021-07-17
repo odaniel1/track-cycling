@@ -29,6 +29,11 @@ prepare_races <- function(path){
     ) %>%
     left_join(location_lookup())
   
+  races <- races %>%
+    mutate(
+      split = if_else(date < ymd(20200101), 'training', 'evaluation')
+    )
+  
   return(races)
 }
 
@@ -36,8 +41,8 @@ prepare_results <- function(races_df){
   
   results <- vroom::vroom(paste0('../tissot-scraper/',races_df$csv_path)) %>% 
     bind_rows() %>%
-    left_join(races_df %>% select(csv_path, location_country_code)) %>%
-    select(event, date, location_country_code, gender, race, round, rider, team, heat_id, win_count)
+    left_join(races_df %>% select(csv_path, location_country_code, split)) %>%
+    select(split, event, date, location_country_code, gender, race, round, rider, team, heat_id, win_count)
   
   results <- results %>%
     group_by(date, race, round, heat_id) %>%
@@ -81,13 +86,20 @@ prepare_rider_days <- function(results_df, riders_df){
   
   rider_days <- results_df %>%
     left_join(riders_df, by = c("rider" = "rider_name")) %>%
-    distinct(rider_id, date) %>%
+    distinct(rider_id, date) 
+  
+  rider_today <- tibble()
+  
+  rider_days <- bind_rows(rider_days, rider_today) %>%
+    distinct() %>%
     arrange(rider_id, date) %>%
     group_by(rider_id) %>%
     mutate(
       rider_date_no = 1:n() - 1,
       days_to_prev = as.numeric(date - lag(date,1)),
-      days_to_prev = if_else(is.na(days_to_prev),0,days_to_prev)
+      days_to_prev = if_else(is.na(days_to_prev),0,days_to_prev),
+      days_to_start = as.numeric(date - min(date)),
+      years_to_start = days_to_start/365.25
     ) %>%
     ungroup()
   
@@ -127,7 +139,8 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df){
     )
   
   matches <- matches %>%
-    filter(!is.na(rider_1) & !is.na(rider_2))
+    filter(!is.na(rider_1) & !is.na(rider_2)) %>%
+    arrange(desc(split), date, round, heat_id)
   
   return(matches)
 }

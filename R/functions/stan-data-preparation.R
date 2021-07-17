@@ -1,7 +1,18 @@
 
 prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
 
-  date_diffs_rider_pos <- days_df %>%
+  # arrange so all training data preceeds evaluation data
+  matches_df <- matches_df  %>%
+    arrange(desc(split), round)
+  
+  split_round_index <- matches_df %>%
+    mutate(row_no = 1:n()) %>%
+    group_by(split, round) %>%
+    summarise(pos = min(row_no)) %>%
+    arrange(desc(split), round) %>%
+    ungroup()
+  
+  rider_date_start <- days_df %>%
     mutate(row_no = 1:n()) %>%
     group_by(rider_id) %>%
     summarise(pos = min(row_no)) %>%
@@ -11,19 +22,21 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
   stan_data <- list(
     R = nrow(riders_df),  # No. Riders
     M = nrow(matches_df), # No Matches
+    T = sum(matches_df$split == "training"),
     P = nrow(pairing_df), # No. Pairings, models >= 4.0
     D = nrow(days_df),
-    Z = nrow(days_df %>% filter(days_to_prev > 0)),
     winner_id = matches_df$winner_id, # ID of first rider
     loser_id = matches_df$loser_id, # ID of second rider
     pairings = as.matrix(pairing_df %>% select(min_rider_id, max_rider_id)), # No. Pairings, models >= 4.0
     sprints = matches_df$sprints, # No. Sprints in match, models >= 2.0
+    split_round_index = split_round_index$pos,
     winner_date_no = matches_df$winner_date_no,
     loser_date_no = matches_df$loser_date_no,
     winner_at_home = matches_df$winner_at_home,
     loser_at_home = matches_df$loser_at_home,
-    date_diffs_rider_pos = date_diffs_rider_pos$pos,
-    date_diffs = days_df$days_to_prev
+    date_index_R = rider_date_start$pos,
+    rider_dates = days_df$years_to_start,
+    B = 15
   )
   
   return(stan_data)
