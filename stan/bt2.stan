@@ -23,9 +23,11 @@ functions {
 data {
   int<lower=0> R; // Riders
   int<lower=0> M; // Matches
+  int<lower=0,upper = M> T; // Training matches
   int<lower=1,upper=R> winner_id[M]; // ID's specifying riders in match
   int<lower=1,upper=R> loser_id[M];
   int<lower=1,upper=3> sprints[M];
+  int<lower=1,upper=M> split_round_index[10];
 }
 
 parameters {
@@ -40,12 +42,57 @@ transformed parameters {
 }
 
 model {
-  sigma ~ student_t(3,0,1);
+  sigma ~ gamma(15,40);
   alpha0 ~ normal(0,sigma); 
-  sprints ~ match_logit(delta);
+  head(sprints, T) ~ match_logit(head(delta, T));
 }
 
 generated quantities {
-  real avg_log_loss = -inv(M) * bernoulli_logit_lpmf(1 | delta);
-  real avg_match_log_loss = inv(M) * match_log_loss(sprints,  delta);
+  // Calculate log-loss, match log-loss and accuracy. This is broken down into individual
+  // rounds and split data (eg. log loss for Finals Evaluation data)
+  vector[5] training_accuracy = rep_vector(0,5);
+  vector[5] evaluation_accuracy = rep_vector(0,5);
+  vector[5] training_log_loss = rep_vector(0,5);
+  vector[5] evaluation_log_loss = rep_vector(0,5);
+  vector[5] training_match_log_loss = rep_vector(0,5);
+  vector[5] evaluation_match_log_loss = rep_vector(0,5);
+{
+   // Training data 
+   for(r in 1:5){
+    for(m in split_round_index[r]:(split_round_index[r+1]-1)){training_accuracy[r] += (delta[m] > 0);}
+    training_accuracy[r] = inv(split_round_index[r+1] - split_round_index[r]) * training_accuracy[r];
+    
+    training_log_loss[r] = - inv(split_round_index[r+1] - split_round_index[r]) *
+      bernoulli_logit_lpmf(1 | segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
+      
+    training_match_log_loss[r] = inv(split_round_index[r+1] - split_round_index[r]) *
+      match_log_loss(segment(sprints, split_round_index[r], split_round_index[r+1] - split_round_index[r]),
+                     segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
+  }
+  
+  // Evaluation data
+  for(r in 6:9){
+    for(m in split_round_index[r]:(split_round_index[r+1]-1)){evaluation_accuracy[r-5] += (delta[m] > 0);}
+    evaluation_accuracy[r-5] = inv(split_round_index[r+1] - split_round_index[r]) * evaluation_accuracy[r-5];
+    
+    evaluation_log_loss[r-5] = - inv(split_round_index[r+1] - split_round_index[r]) *
+      bernoulli_logit_lpmf(1 | segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
+      
+    evaluation_match_log_loss[r-5] = inv(split_round_index[r+1] - split_round_index[r]) *
+      match_log_loss(segment(sprints, split_round_index[r], split_round_index[r+1] - split_round_index[r]),
+                     segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
+  }
+  
+  // Evaluation data (final row, not indexed)
+    for(m in split_round_index[10]:M){evaluation_accuracy[5] += (delta[m] > 0);}
+    evaluation_accuracy[5] = inv(M - split_round_index[10]) * evaluation_accuracy[5];
+    
+    evaluation_log_loss[5] = - inv(M - split_round_index[10]) *
+      bernoulli_logit_lpmf(1 | segment(delta, split_round_index[10], M - split_round_index[10]));
+      
+    evaluation_match_log_loss[5] = inv(M - split_round_index[10]) *
+      match_log_loss(segment(sprints, split_round_index[10],  M - split_round_index[10]),
+                     segment(delta, split_round_index[10],  M - split_round_index[10]));
+    
+  }  
 }

@@ -52,6 +52,7 @@ data {
   int<lower=0> D; // Dates
   int<lower=1,upper=R> winner_id[M]; // ID's specifying riders in match
   int<lower=1,upper=R> loser_id[M];
+  int<lower=1,upper=M> split_round_index[10];
   int<lower=1,upper=3> sprints[M];
   int<lower=0> winner_date_no[M];
   int<lower=0> loser_date_no[M];
@@ -64,36 +65,17 @@ data {
 
 transformed data {
   vector[D] d_sc;
-  real L;
+  real<lower=0> L;
   matrix[D,B] PHI;
+  
   {
-    for(r in 1:R-1){
-      // center and scale rider t
-      vector[(date_index_R[r+1] - date_index_R[r])] d_r = rider_dates[date_index_R[r]:(date_index_R[r+1]-1)];
-      real mu_d_r = mean(d_r);
-      real sd_d_r = sd(d_r);
-      d_sc[date_index_R[r]:(date_index_R[r+1]-1)] = (d_r-mu_d_r)/sd_d_r;
-      
-      // rider basis function approx
-      L[r] = rider_dates[date_index_R[r+1]-1] * 5.0/2.0;
-      
-      // rider GP approximation
-      for(b in 1:B) PHI[date_index_R[r]:(date_index_R[r+1]-1),b] = phi(L[r],b,d_sc[date_index_R[r]:(date_index_R[r+1]-1)]);
-    }
-    
-    {
-      // center and scale rider t
-      vector[(D - date_index_R[R])] d_r = rider_dates[date_index_R[R]:D];
-      real mu_d_r = mean(d_r);
-      real sd_d_r = sd(d_r);
-      d_sc[date_index_R[R]:D] = (d_r-mu_d_r)/sd_d_r;
-      
-      // rider basis function approx      
-      L[R] = rider_dates[D] * 5.0/2.0;
-      
-      // rider GP approximation      
-      for(b in 1:B) PHI[date_index_R[R]:D,b] = phi(L[R],b,d_sc[date_index_R[R]:D]);
-    }
+    real mu_d = mean(rider_dates);
+    real sd_d = sd(rider_dates);
+    d_sc = (rider_dates-mu_d)/sd_d;
+    L = (max(d_sc) - min(d_sc)) * 5.0/2.0;
+
+    // rider GP approximation      
+    for(b in 1:B) PHI[,b] = phi(L,b,d_sc);
   }
 }
 
@@ -102,7 +84,9 @@ parameters {
   real alpha0[R];
   real<lower=0>sigma;
   
-  // GP hyperparameters
+  // GP parameters and hyperparameters
+	real<lower=0> rho_pr;
+	real<lower=0> tau_pr;
 	vector<lower=0>[R] rho;
 	vector<lower=0>[R] tau;
 	
@@ -117,28 +101,16 @@ transformed parameters{
 	  {
 	    
     for(r in 1:R-1){
-      if(date_index_R[r] != (date_index_R[r+1]-1)){
         f[date_index_R[r]:(date_index_R[r+1]-1)] =
-          PHI[date_index_R[r]:(date_index_R[r+1]-1),] *  (sqrt(diag_exp_quad(L[r], B, tau[r], rho[r])) .* segment(zeta, 1 + (r-1)*B, B));
+          PHI[date_index_R[r]:(date_index_R[r+1]-1),] *  (sqrt(diag_exp_quad(L, B, tau[r], rho[r])) .* segment(zeta, 1 + (r-1)*B, B));
+        
         alphaD[date_index_R[r]:(date_index_R[r+1]-1)] =  alpha0[r] + f[date_index_R[r]:(date_index_R[r+1]-1)];
-      }
-      else{
-        f[date_index_R[r]] = 0;
-        alphaD[date_index_R[r]] =  alpha0[r];
-      }
     }
-    
-    if(date_index_R[R] != D){
+  
       f[date_index_R[R]:D] =
-          PHI[date_index_R[R]:D,] *  (sqrt(diag_exp_quad(L[R], B, tau[R], rho[R])) .* segment(zeta, 1 + (R-1)*B, B));
+          PHI[date_index_R[R]:D,] *  (sqrt(diag_exp_quad(L, B, tau[R], rho[R])) .* segment(zeta, 1 + (R-1)*B, B));
       
       alphaD[date_index_R[R]:D] = alpha0[R] + f[date_index_R[R]:D];
-    }
-    else{
-      f[date_index_R[R]] = 0;
-      alphaD[date_index_R[R]] =  alpha0[R];
-    }
-
 	  }
 	  
 	  for(m in 1:M){
@@ -148,35 +120,68 @@ transformed parameters{
 
 
 model{
-  sigma ~ gamma(15,40);
+  // rider average strength
+  sigma ~ normal(0,2); //gamma(15,40);
 	alpha0 ~ normal(0,sigma);
-	
+
+  // Gaussian process lengthscale/magnitude
+  rho_pr ~ inv_gamma(6,3);
+  tau_pr ~ inv_gamma(10,2);
+	rho ~ normal(0,rho_pr);		// lengthscale GP
+	tau ~ normal(0,tau_pr);		// magnitud GP
+
+	// latent variables for approx. Gaussian Process 
 	zeta ~ normal(0,1);
-	rho ~ normal(0,1);		// lengthscale GP
-	tau ~ normal(0,0.2);		// magnitud GP
-	
-	sprints ~ match_logit(delta);
+
   head(sprints, T) ~ match_logit(head(delta, T));
 }
 
 generated quantities {
-  
-  real training_avg_log_loss = -inv(T) * bernoulli_logit_lpmf(1 | head(delta, T));
-  real evaluation_avg_log_loss = -inv(M-T) * bernoulli_logit_lpmf(1 | tail(delta, M - T));
-  
-  real training_avg_match_log_loss = inv(T) * match_log_loss(head(sprints, T), head(delta, T));
-  real evaluation_avg_match_log_loss = inv(M-T) * match_log_loss( tail(sprints, M - T), tail(delta, M - T));
-  
-  real training_accuracy = 0;
-  real evaluation_accuracy = 0;
-  
-  for(m in 1:T){
-    training_accuracy += (delta[m] > 0);
+  // Calculate log-loss, match log-loss and accuracy. This is broken down into individual
+  // rounds and split data (eg. log loss for Finals Evaluation data)
+  vector[5] training_accuracy = rep_vector(0,5);
+  vector[5] evaluation_accuracy = rep_vector(0,5);
+  vector[5] training_log_loss = rep_vector(0,5);
+  vector[5] evaluation_log_loss = rep_vector(0,5);
+  vector[5] training_match_log_loss = rep_vector(0,5);
+  vector[5] evaluation_match_log_loss = rep_vector(0,5);
+{
+   // Training data 
+   for(r in 1:5){
+    for(m in split_round_index[r]:(split_round_index[r+1]-1)){training_accuracy[r] += (delta[m] > 0);}
+    training_accuracy[r] = inv(split_round_index[r+1] - split_round_index[r]) * training_accuracy[r];
+    
+    training_log_loss[r] = - inv(split_round_index[r+1] - split_round_index[r]) *
+      bernoulli_logit_lpmf(1 | segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
+      
+    training_match_log_loss[r] = inv(split_round_index[r+1] - split_round_index[r]) *
+      match_log_loss(segment(sprints, split_round_index[r], split_round_index[r+1] - split_round_index[r]),
+                     segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
   }
-    for(m in (T+1):M){
-    evaluation_accuracy += (delta[m] > 0);
+  
+  // Evaluation data
+  for(r in 6:9){
+    for(m in split_round_index[r]:(split_round_index[r+1]-1)){evaluation_accuracy[r-5] += (delta[m] > 0);}
+    evaluation_accuracy[r-5] = inv(split_round_index[r+1] - split_round_index[r]) * evaluation_accuracy[r-5];
+    
+    evaluation_log_loss[r-5] = - inv(split_round_index[r+1] - split_round_index[r]) *
+      bernoulli_logit_lpmf(1 | segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
+      
+    evaluation_match_log_loss[r-5] = inv(split_round_index[r+1] - split_round_index[r]) *
+      match_log_loss(segment(sprints, split_round_index[r], split_round_index[r+1] - split_round_index[r]),
+                     segment(delta, split_round_index[r], split_round_index[r+1] - split_round_index[r]));
   }
   
-  training_accuracy = training_accuracy * inv(T);
-  evaluation_accuracy = evaluation_accuracy * inv(M-T);
+  // Evaluation data (final row, not indexed)
+    for(m in split_round_index[10]:M){evaluation_accuracy[5] += (delta[m] > 0);}
+    evaluation_accuracy[5] = inv(M - split_round_index[10]) * evaluation_accuracy[5];
+    
+    evaluation_log_loss[5] = - inv(M - split_round_index[10]) *
+      bernoulli_logit_lpmf(1 | segment(delta, split_round_index[10], M - split_round_index[10]));
+      
+    evaluation_match_log_loss[5] = inv(M - split_round_index[10]) *
+      match_log_loss(segment(sprints, split_round_index[10],  M - split_round_index[10]),
+                     segment(delta, split_round_index[10],  M - split_round_index[10]));
+    
+  }  
 }
