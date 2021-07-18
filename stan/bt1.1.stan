@@ -48,7 +48,7 @@ generated quantities {
   vector[5] evaluation_log_loss = rep_vector(0,5);
   vector[5] training_match_log_loss = rep_vector(0,5);
   vector[5] evaluation_match_log_loss = rep_vector(0,5);
-{
+  {
    // Training data 
    for(r in 1:5){
     for(m in split_round_index[r]:(split_round_index[r+1]-1)){training_accuracy[r] += (delta[m] > 0);}
@@ -85,6 +85,5 @@ generated quantities {
     evaluation_match_log_loss[5] = inv(M - split_round_index[10]) *
       match_log_loss(segment(sprints, split_round_index[10],  M - split_round_index[10]),
                      segment(delta, split_round_index[10],  M - split_round_index[10]));
-    
   }  
 }

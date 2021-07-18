@@ -59,5 +59,4 @@ generated quantities {
     
     evaluation_log_loss[5] = - inv(M - split_round_index[10]) *
       bernoulli_logit_lpmf(1 | segment(delta, split_round_index[10], M - split_round_index[10]));
-  }  
-}
+}  
