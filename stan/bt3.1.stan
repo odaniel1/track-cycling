@@ -29,7 +29,7 @@ functions {
 
 data {
   int<lower=1> N;
-  int<lower=1,upper=N> T;
+  // int<lower=1,upper=N> T;
   int<lower=1> R;
   int<lower=1> r_start[R];
   vector[N] t;
@@ -41,61 +41,48 @@ data {
 
 transformed data {
   vector[N] t_sc;
-  vector[R] L;
+  real L;
   matrix[N,M] PHI;
-  {
-    for(r in 1:R-1){
-      vector[(r_start[r+1] - r_start[r])] t_r = t[r_start[r]:(r_start[r+1]-1)];
-      real mu_t_r = mean(t_r);
-      real sd_t_r = sd(t_r);
-      t_sc[r_start[r]:(r_start[r+1]-1)] = (t_r-mu_t_r)/sd_t_r;
-      
-      L[r] = t[r_start[r]-1] * 5.0/2.0;
-    }
-    
-    vector[(N - r_start[R])] t_r = t[r_start[R]:N];
-    real mu_t_r = mean(t_r);
-    real sd_t_r = sd(t_r);
-    t_sc[r_start[r]:(r_start[r+1]-1)] = (t_r-mu_t_r)/sd_t_r;
-    L[R] = t[N] * 5.0/2.0;
-    
-  }
-   
-  
   
   {
-    for(r in 1:R){
-    }
+    real mu_t = mean(t);
+    real sd_t = sd(t);
+    t_sc = (t-mu_t)/sd_t;
+    L = (max(t_sc) - min(t_sc)) * 5.0/2.0;
+
+    // rider GP approximation      
+    for(m in 1:M) PHI[,m] = phi(L,m,t_sc);
   }
-  // center and scale t
-  real t_mu = mean(t);
-  real t_sd = sd(t);
-  vector[N] t_sc = (t-t_mu)/t_sd;
-  
-  // basis function approx
-  real L= max(t_sc - min(t_sc)) * 5.0/2.0;
-	
-	// GP approximation
-	matrix[N,M] PHI;
-	for (m in 1:M) PHI[,m] = phi(L, m, t_sc);
 }
 
 parameters {
   // GP hyperparameters
-	// vector<lower=0>[1] rho;
-	// vector<lower=0>[1] alpha;
-	real<lower=0> rho;
-	real<lower=0> alpha;
+	vector<lower=0>[R] rho;
+	vector<lower=0>[R] alpha;
 	
 	// GP centering
-	real a;
+	real a[R];
 	
 	// latent variables for GP approx.
-	vector[M] zeta;
+	vector[R*M] zeta;
 }
 
 transformed parameters{
-	vector[N] f = PHI *  (sqrt(diag_exp_quad(L, M, alpha, rho)) .* zeta);
+	vector[N] f;
+	vector[N] af;
+	  {
+    for(r in 1:R-1){
+      f[r_start[r]:(r_start[r+1]-1)] =
+        PHI[r_start[r]:(r_start[r+1]-1),] *  (sqrt(diag_exp_quad(L, M, alpha[r], rho[r])) .* segment(zeta, 1 + (r-1)*M, M));
+        
+      af[r_start[r]:(r_start[r+1]-1)] =  a[r] + f[r_start[r]:(r_start[r+1]-1)];
+    }
+    
+    f[r_start[R]:N] =
+        PHI[r_start[R]:N,] *  (sqrt(diag_exp_quad(L, M, alpha[R], rho[R])) .* segment(zeta, 1 + (R-1)*M, M));
+
+    af[r_start[R]:N] = a[R] + f[r_start[R]:N];
+	  }
 }
 
 model{
@@ -104,9 +91,5 @@ model{
 	alpha ~ normal(0,1);			// magnitud GP
 	a ~ normal(0,1);          // centering
 	
-	head(w, T) ~ binomial_logit(head(g,T), a+head(f, T));
-}
-
-generated quantities {
-  vector[N] af = a + f;
+	w ~ binomial_logit(g, af);
 }

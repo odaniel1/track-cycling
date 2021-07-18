@@ -23,6 +23,7 @@ functions {
 data {
   int<lower=0> R; // Riders
   int<lower=0> M; // Matches
+  int<lower=0,upper = M> T; // Training matches
   int<lower=0> D; // Dates
   int<lower=0> Z; // No. Riders with multiple dates
   int<lower=1,upper=R> winner_id[M]; // ID's specifying riders in match
@@ -33,10 +34,6 @@ data {
   int<lower=0> date_diffs[D];
   int<lower=0> date_diffs_rider_pos[R];
 }
-
-// transformed data {
-//   int z = 1;
-// }
 
 parameters {
   // rider ratings
@@ -75,19 +72,38 @@ transformed parameters {
     delta[m] = alpha[date_diffs_rider_pos[winner_id[m]] + winner_date_no[m]] - 
     alpha[date_diffs_rider_pos[loser_id[m]] + loser_date_no[m]];
   }
+
   }
 }
 
 
 model {
-  sigma ~ student_t(3,0,1);
+  sigma ~ gamma(15,40);
   tau ~ student_t(3,0,1);
   alpha0 ~ normal(0,sigma);
   zeta ~ normal(0,tau);
-  sprints ~ match_logit(delta);
+  head(sprints, T) ~ match_logit(head(delta, T));
 }
 
 generated quantities {
-  real avg_log_loss = -inv(M) * bernoulli_logit_lpmf(1 | delta);
-  real avg_match_log_loss = inv(M) * match_log_loss(sprints,  delta);
+  real max_delta = max(alpha0) - min(alpha0);
+
+  real training_avg_log_loss = -inv(T) * bernoulli_logit_lpmf(1 | head(delta, T));
+  real evaluation_avg_log_loss = -inv(M-T) * bernoulli_logit_lpmf(1 | tail(delta, M - T));
+  
+  real training_avg_match_log_loss = inv(T) * match_log_loss(head(sprints, T), head(delta, T));
+  real evaluation_avg_match_log_loss = inv(M-T) * match_log_loss( tail(sprints, M - T), tail(delta, M - T));
+  
+  real training_accuracy = 0;
+  real evaluation_accuracy = 0;
+  
+  for(m in 1:T){
+    training_accuracy += (delta[m] > 0);
+  }
+    for(m in (T+1):M){
+    evaluation_accuracy += (delta[m] > 0);
+  }
+  
+  training_accuracy = training_accuracy * inv(T);
+  evaluation_accuracy = evaluation_accuracy * inv(M-T);
 }
