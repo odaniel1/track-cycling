@@ -27,7 +27,7 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     D = nrow(days_df),
     winner_id = matches_df$winner_id, # ID of first rider
     loser_id = matches_df$loser_id, # ID of second rider
-    pairings = as.matrix(pairing_df %>% select(min_rider_id, max_rider_id)), # No. Pairings, models >= 4.0
+    pairings = as.matrix(pairing_df %>% select(min_rider_id, max_rider_id)),
     sprints = matches_df$sprints, # No. Sprints in match, models >= 2.0
     split_round_index = c(split_round_index$pos, nrow(matches_df)),
     winner_date_no = matches_df$winner_date_no,
@@ -36,7 +36,8 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     loser_at_home = matches_df$loser_at_home,
     date_index_R = c(rider_date_start$pos, nrow(days_df)),
     rider_dates = days_df$years_to_start,
-    B = 15
+    B = 15,
+    qual_diff = matches_df$winner_qual_time_diff
   )
   
   return(stan_data)

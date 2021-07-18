@@ -12,7 +12,8 @@ models <- tribble(
   "bt1.1", "stan/bt1.1.stan", "bt1, with match log loss",
   "bt2", "stan/bt2.stan", "BT with match log density",
   "bt3", "stan/bt3.stan", "bt2, with home advantage effect",
-  "bt4", "stan/bt4.stan", "bt3, with Gaussian Process for time dependent strengths"
+  "bt4", "stan/bt4.stan", "bt3, with Gaussian Process for time dependent strengths",
+  "bt5", "stan/bt5.stan", "bt4, with qualifying time diff predictor"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
@@ -25,6 +26,8 @@ list(
   tar_target(races, prepare_races(race_path)),
   
   tar_target(results, prepare_results(races)),
+  
+  tar_target(qualifying, prepare_qualifying(races)),
 
   tar_target(teams, prepare_teams(team_path, results)),
   
@@ -32,7 +35,7 @@ list(
   
   tar_target(rider_days, prepare_rider_days(results, riders)),
 
-  tar_target(matches, prepare_matches(results, riders, rider_days, teams)),
+  tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying)),
   
   tar_target(pairings, prepare_pairings(matches)),
   

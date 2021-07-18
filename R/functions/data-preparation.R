@@ -25,7 +25,6 @@ prepare_races <- function(path){
       csv_cached == TRUE,
       race   ==   'Individual Sprint',
       gender ==   'Women',
-      round  !=   'Qualifying',
     ) %>%
     left_join(location_lookup())
   
@@ -37,17 +36,33 @@ prepare_races <- function(path){
   return(races)
 }
 
+prepare_qualifying <- function(races_df){
+  qualifying <- races_df %>%
+    filter(round == 'Qualifying')
+  
+  qual_results <- vroom::vroom(paste0('../tissot-scraper/',qualifying$csv_path)) %>% 
+    bind_rows() %>%
+    left_join(races_df %>% select(csv_path, year, location_country_code, split)) %>%
+    select(event, year, location_country_code, gender, race, rider, time) %>%
+    filter(time > 0)
+  
+  return(qual_results)
+}
+
 prepare_results <- function(races_df){
   
-  results <- vroom::vroom(paste0('../tissot-scraper/',races_df$csv_path)) %>% 
+  races <- races_df %>%
+    filter(round  !=   'Qualifying')
+  
+  results <- vroom::vroom(paste0('../tissot-scraper/',races$csv_path)) %>% 
     bind_rows() %>%
-    left_join(races_df %>% select(csv_path, location_country_code, split)) %>%
-    select(split, event, date, location_country_code, gender, race, round, rider, team, heat_id, win_count)
+    left_join(races_df %>% select(csv_path, year, location_country_code, split)) %>%
+    select(split, event, date, year, location_country_code, gender, race, round, rider, team, heat_id, win_count)
   
   results <- results %>%
     group_by(date, race, round, heat_id) %>%
     mutate(seed = paste0('seed_',1:n())) %>%
-    ungroup() 
+    ungroup()
   
   results <- results %>%
     mutate(
@@ -107,7 +122,7 @@ prepare_rider_days <- function(results_df, riders_df){
   
 }
 
-prepare_matches <- function(results_df, riders_df, days_df, team_df){
+prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df){
   
   matches <- results_df %>%
     # reformat in wide: one row per match, and add rider names
@@ -138,6 +153,16 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df){
       loser_at_home = if_else(win_count_2 > win_count_1, 1 * (location_country_code == country_code_2),1 * (location_country_code == country_code_2)),
     )
   
+  # # add winner/loser centred qualifying time 
+  matches <- matches %>%
+    left_join(qual_df %>% rename(rider_1 = rider, qual_time_1 = time)) %>%
+    left_join(qual_df %>% rename(rider_2 = rider, qual_time_2 = time)) %>%
+    mutate(
+      winner_qual_time_diff =
+        if_else(winner_id == rider_id_1, qual_time_1 - qual_time_2, qual_time_2 - qual_time_1)
+    ) %>%
+    filter(!is.na(winner_qual_time_diff))
+
   matches <- matches %>%
     filter(!is.na(rider_1) & !is.na(rider_2)) %>%
     arrange(desc(split), date, round, heat_id)
