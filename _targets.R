@@ -12,7 +12,7 @@ models <- tribble(
   "bt1.1", "stan/bt1.1.stan", "bt1, with match log loss",
   "bt2", "stan/bt2.stan", "BT with match log density",
   "bt3", "stan/bt3.stan", "bt2, with home advantage effect",
-  # "bt3.2", "stan/bt3.2.stan", "bt2, with Gaussian Process for time changing strengths"
+  "bt4", "stan/bt4.stan", "bt3, with Gaussian Process for time dependent strengths"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
