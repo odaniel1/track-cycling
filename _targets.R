@@ -9,11 +9,14 @@ purrr::map(dir_ls("R/functions", recurse = TRUE, glob = "*.R"), source)
 models <- tribble(
   ~model_name, ~path, ~description,
   "bt1", "stan/bt1.stan", "Basic Bradley Terry model.",
-  "bt1.1", "stan/bt1.1.stan", "bt1, with match log loss",
-  "bt2", "stan/bt2.stan", "BT with match log density",
+  "bt1.1", "stan/bt1.1.stan", "bt1, with Gamma prior",
+  "bt1.2", "stan/bt1.2.stan", "bt1.1, with match log loss",
+  "bt2", "stan/bt2.stan", "BT with match log likelihood",
   "bt3", "stan/bt3.stan", "bt2, with home advantage effect",
   "bt4", "stan/bt4.stan", "bt3, with Gaussian Process for time dependent strengths",
-  "bt5", "stan/bt5.stan", "bt4, with qualifying time diff predictor"
+  "bt5", "stan/bt5.stan", "bt4, with qualifying time diff predictor",
+  "bt5.1", "stan/bt5.1.stan", "bt4, with qualifying time diff predictor",
+  "bt5.2", "stan/bt5.2.stan", "bt4, with qualifying time diff predictor"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
@@ -52,4 +55,3 @@ tar_stan_mcmc(
     refresh = 500
   )
 )
-
