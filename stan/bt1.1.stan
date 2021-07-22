@@ -14,7 +14,7 @@ functions {
       vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1); 
       real ll = 0;
       
-      return -inv(num_elements(delta_seg)) * bernoulli_logit_lpmf(1 | delta_seg);
+      return inv(num_elements(delta_seg)) * bernoulli_logit_lpmf(1 | delta_seg);
   }
 }
 
