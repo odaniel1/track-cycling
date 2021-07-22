@@ -92,7 +92,10 @@ data {
   vector[D] rider_dates;
   
   // basis function approx.
-  int<lower=1> B; 
+  int<lower=1> B;
+  
+  // qualifying time difference;
+  real qual_diff[M];
 }
 
 transformed data {
@@ -127,6 +130,10 @@ parameters {
 	vector<lower=0>[R] rho; // lengthscale
 	vector<lower=0>[R] tau; // magnitude
 	vector[R*B] zeta; 	    // latent variables
+	
+	// qualifying time difference;
+	real<lower=0> psi;
+	real kappa;
 }
 
 transformed parameters{
@@ -145,7 +152,8 @@ transformed parameters{
 	  
 	for(m in 1:M){
 	  delta[m] = alphaD[date_index_R[winner_id[m]] + winner_date_no[m]] - alphaD[date_index_R[loser_id[m]] + loser_date_no[m]] +
-      winner_at_home[m] * (eta + theta[winner_id[m]]) - loser_at_home[m] * (eta + theta[winner_id[m]]);
+      winner_at_home[m] * (eta + theta[winner_id[m]]) - loser_at_home[m] * (eta + theta[winner_id[m]]) +
+      kappa * qual_diff[m];
 	}
 }
 
@@ -165,6 +173,10 @@ model{
 	rho ~ normal(0,rho_pr);		// lengthscale GP
 	tau ~ normal(0,tau_pr);		// magnitud GP
 	zeta ~ normal(0,1);   	  // latent variables for approx. Gaussian Process
+
+	// qualifying time difference;
+	psi ~ normal(0,0.5);
+	kappa ~ normal(0,psi);
 
   head(sprints, T) ~ match_logit(head(delta, T));
 }
