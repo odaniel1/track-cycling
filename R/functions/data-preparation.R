@@ -23,8 +23,7 @@ prepare_races <- function(path){
   races <- read_csv(path) %>%
     filter(
       csv_cached == TRUE,
-      race   ==   'Individual Sprint',
-      gender ==   'Women',
+      race   ==   'Individual Sprint'
     ) %>%
     left_join(location_lookup())
   
@@ -60,7 +59,7 @@ prepare_results <- function(races_df){
     select(split, event, date, year, location_country_code, gender, race, round, rider, team, heat_id, win_count)
   
   results <- results %>%
-    group_by(date, race, round, heat_id) %>%
+    group_by(date, race, round, gender, heat_id) %>%
     mutate(seed = paste0('seed_',1:n())) %>%
     ungroup()
   
@@ -88,10 +87,14 @@ prepare_teams <- function(path, results_df){
 prepare_riders <- function(results_df){
   
   riders <- results_df %>%
-    distinct(rider) %>%
+    group_by(rider, gender) %>%
+    slice(which.max(date)) %>%
+    ungroup() %>%
     transmute(
       rider_name = rider,
-      rider_id = 1:n()
+      gender,
+      rider_id = 1:n(),
+      max_date = date
     )
   
   return(riders)
@@ -127,8 +130,8 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df){
   matches <- results_df %>%
     # reformat in wide: one row per match, and add rider names
     pivot_wider(names_from = c(seed), values_from = c(team, rider, win_count)) %>%
-    left_join(riders_df %>% rename(rider_seed_1 = rider_name, rider_id_seed_1 = rider_id)) %>%
-    left_join(riders_df %>% rename(rider_seed_2 = rider_name, rider_id_seed_2 = rider_id)) %>%
+    left_join(riders_df %>% select(rider_seed_1 = rider_name, rider_id_seed_1 = rider_id)) %>%
+    left_join(riders_df %>% select(rider_seed_2 = rider_name, rider_id_seed_2 = rider_id)) %>%
     rename_with(~str_remove(., "seed_"))
   
   # identify rider id of winning/losing rider and no. sprints in match
