@@ -23,7 +23,8 @@ prepare_races <- function(path){
   races <- read_csv(path) %>%
     filter(
       csv_cached == TRUE,
-      race   ==   'Individual Sprint'
+      race   ==   'Individual Sprint',
+      gender == 'Women'
     ) %>%
     left_join(location_lookup())
   
