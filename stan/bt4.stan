@@ -1,43 +1,39 @@
 
 functions {
   real match_logit_lpmf(int[] s, vector delta){
+    real lpmf = 0;
+    vector[num_elements(delta)] p = inv_logit(delta);
+    
     for(n in 1:num_elements(s)){
-      if (s[n] < 3)
-        return binomial_logit_lpmf(s[n] | s[n], delta);
-      else
-        return binomial_logit_lpmf(2 | 3, delta) - log(3) + log(2);
+      if (s[n] == 1) lpmf += log(p[n]);
+      else if (s[n] == 2) lpmf += 2*log(p[n]);
+      else lpmf += log(2) + 2*log(p[n]) + log(1-p[n]);
     }
+    return lpmf;
   }
   
   real accuracy(vector delta, int start, int end){
-      vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1);
-      real acc = 0;
-      
-      for(n in 1:num_elements(delta_seg)) acc += (delta_seg[n] > 0);
-
-      return inv(num_elements(delta_seg)) * acc;
+    vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1);
+    real acc = 0;
+    
+    for(n in 1:num_elements(delta_seg)) acc += (delta_seg[n] > 0);
+    
+    return inv(num_elements(delta_seg)) * acc;
   }
   
   real log_loss(vector delta, int start, int end){
-      vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1); 
-      real ll = 0;
-      
-      ll += -bernoulli_logit_lpmf(1 | delta_seg);
-      return inv(num_elements(delta_seg)) * ll;
+    vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1); 
+    real ll = 0;
+    
+    return inv(num_elements(delta_seg)) * bernoulli_logit_lpmf(1 | delta_seg);
   }
   
   real match_log_loss(int[] s, vector delta, int start, int end){
-      int s_seg[end - start + 1]  = segment(s, start, end - start + 1);
-      vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1); 
-      real mll = 0;
-      
-      for(n in 1:num_elements(s_seg)){
-        if (s_seg[n] == 1) mll += -binomial_logit_lpmf(1 | 1, delta_seg[n]);
-        else mll += -log_sum_exp(binomial_logit_lpmf(2 | 2, delta_seg[n]),  binomial_logit_lpmf(2 | 3, delta_seg[n]) - log(3) + log(2));
-      }
-      
-      mll = inv(num_elements(s_seg)) * mll;
-      return mll;
+    int s_seg[end - start + 1]  = segment(s, start, end - start + 1);
+    vector[end - start + 1] delta_seg = segment(delta, start, end - start + 1); 
+    real mll = 0;
+    
+    return inv(num_elements(s_seg)) * match_logit_lpmf(s_seg | delta_seg);
   }
 }
 
@@ -84,12 +80,12 @@ transformed parameters {
 
 model {
   // (hierarchical) priors - strength
-  sigma ~ gamma(15,40);
+  sigma ~ gamma(80,60);
   alpha0 ~ normal(0,sigma); 
   
   // (hierarchical) priors - home effect
-  eta ~ normal(0,0.5);
-  upsilon ~ normal(0,0.1);
+  eta ~ gamma(2,4);
+  upsilon ~ normal(0,0.2);
   theta ~ normal(0, upsilon);
   
   // likelihood
@@ -97,22 +93,27 @@ model {
 }
 
 generated quantities {
-  // Calculate log-loss, match log-loss and accuracy. This is broken down into individual
-  // rounds and split data (eg. log loss for Finals Evaluation data)
-  vector[5] training_accuracy = rep_vector(0,5);
-  vector[5] evaluation_accuracy = rep_vector(0,5);
-  vector[5] training_log_loss = rep_vector(0,5);
-  vector[5] evaluation_log_loss = rep_vector(0,5);
-  vector[5] training_match_log_loss = rep_vector(0,5);
-  vector[5] evaluation_match_log_loss = rep_vector(0,5);
+  // maximum theoretical strength difference between two riders
+  real<lower=0> delta_max = max(alpha0) - min(alpha0);
+  
+  // Calculate log-loss, match log-loss and accuracy. A separate value is returned
+  // for training/evaluation data, and within each of these the metrics are further
+  // broken down by round (5 rounds in total) and the total (6th entry in vectors).
+  vector[6] training_accuracy = rep_vector(0,6);
+  vector[6] evaluation_accuracy = rep_vector(0,6);
+  vector[6] training_match_log_loss = rep_vector(0,6);
+  vector[6] evaluation_match_log_loss = rep_vector(0,6);
 
   // Training data 
   for(r in 1:5){
     training_accuracy[r] = accuracy(delta, split_round_index[r], split_round_index[r+1]-1);
-    training_log_loss[r] = log_loss(delta, split_round_index[r], split_round_index[r+1]-1);
     training_match_log_loss[r] = match_log_loss(sprints, delta, split_round_index[r], split_round_index[r+1]-1);
     evaluation_accuracy[r] = accuracy(delta, split_round_index[r+5], split_round_index[r+6]-1);
-    evaluation_log_loss[r] = log_loss(delta, split_round_index[r+5], split_round_index[r+6]-1);
     evaluation_match_log_loss[r] = match_log_loss(sprints, delta, split_round_index[r+5], split_round_index[r+6]-1);
   }
+  
+    training_accuracy[6] = accuracy(delta,1, T);
+    training_match_log_loss[6] = match_log_loss(sprints, delta, 1,T);
+    evaluation_accuracy[6] = accuracy(delta, T+1, M);
+    evaluation_match_log_loss[6] = match_log_loss(sprints, delta, T+1, M);
 }
