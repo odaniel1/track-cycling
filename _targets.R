@@ -8,19 +8,22 @@ purrr::map(dir_ls("R/functions", recurse = TRUE, glob = "*.R"), source)
 
 models <- tribble(
   ~model_name, ~path, ~description,
-  "bt1", "stan/bt1.stan", "Basic Bradley Terry model.",
-  "bt1.1", "stan/bt1.1.stan", "bt1, with Gamma prior",
-  "bt1.2", "stan/bt1.2.stan", "bt1.1, with match log loss",
-  "bt2", "stan/bt2.stan", "BT with match log likelihood",
-  "bt3", "stan/bt3.stan", "bt2, with home advantage effect",
-  "bt4", "stan/bt4.stan", "bt3, with Gaussian Process for time dependent strengths",
-  "bt5", "stan/bt5.stan", "bt4, with qualifying time diff predictor",
-  "bt5.1", "stan/bt5.1.stan", "bt4, with qualifying time diff predictor",
-  "bt5.2", "stan/bt5.2.stan", "bt4, with qualifying time diff predictor"
+  "bt1", "stan/bt1.stan", "Basic Bradley-Terry",
+  "bt2", "stan/bt2.stan", "Informative (Gamma) Prior",
+  "bt3", "stan/bt3.stan", "Match Likelihood",
+  "bt1.1", "stan/bt1.1.stan", "Basic Bradley-Terry",
+  "bt2.1", "stan/bt2.1.stan", "Informative (Gamma) Prior",
+  "bt4", "stan/bt4.stan", "Home advantage",
+  "bt5", "stan/bt5.stan", "Time Dependent Strengths"
+  # "bt6", "stan/bt6.stan", "bt5, with qualifying time diff predictor",
+  # "bt6.1", "stan/bt6.1.stan", "bt5, with qualifying time diff predictor",
+  # "bt6.2", "stan/bt6.2.stan", "bt5, with qualifying time diff predictor"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
 list(
+  
+  tar_target(model_list, models),
   
   tar_target(race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
   
@@ -49,7 +52,7 @@ tar_stan_mcmc(
     name = bt,
     stan_files = models$path,
     data = stan_data,
-    iter_warmup = 999, iter_sampling = 1000,
+    iter_warmup = 1999, iter_sampling = 2000,
     parallel_chains = 4,
     seed = 1414214,
     refresh = 500
