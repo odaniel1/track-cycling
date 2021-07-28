@@ -70,11 +70,15 @@ parameters {
 transformed parameters {
   // difference of winner and loser rating
   vector[M] delta;
+  real eta_theta[R];
+  
+  for(r in 1:R) eta_theta[r] = eta + theta[r];
   
   for(m in 1:M){
+    
     delta[m] = 
       alpha0[winner_id[m]] - alpha0[loser_id[m]] +
-      winner_at_home[m] * (eta + theta[winner_id[m]]) - loser_at_home[m] * (eta + theta[winner_id[m]]);
+      (winner_at_home[m] * eta_theta[winner_id[m]]) - (loser_at_home[m] * eta_theta[loser_id[m]]);
   }
 }
 
