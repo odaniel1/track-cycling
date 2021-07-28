@@ -112,8 +112,11 @@ transformed parameters{
 	vector[D] f;       // approximate GP
 	vector[D] alphaD;  // approx. GP with centered on average strength
   vector[M] delta;   // match differences
- 
+  real eta_theta[R];
+  
   for(r in 1:R){
+    
+    eta_theta[r] = eta + theta[r];
     
     vector[B] diagSPD_f_r = diagSPD_exp_quad(tau[r], rho[r], L, B);
     
@@ -126,8 +129,9 @@ transformed parameters{
   }
 	  
 	for(m in 1:M){
-	  delta[m] = alphaD[date_index_R[winner_id[m]] + winner_date_no[m]] - alphaD[date_index_R[loser_id[m]] + loser_date_no[m]] +
-      winner_at_home[m] * (eta + theta[winner_id[m]]) - loser_at_home[m] * (eta + theta[loser_id[m]]);
+	  delta[m] = 
+	   alphaD[date_index_R[winner_id[m]] + winner_date_no[m]] - alphaD[date_index_R[loser_id[m]] + loser_date_no[m]] +
+      (winner_at_home[m] * eta_theta[winner_id[m]]) - (loser_at_home[m] * eta_theta[loser_id[m]]);
 	}
 }
 
@@ -143,9 +147,9 @@ model{
 
   // Gaussian process lengthscale/magnitude
   rho_pr ~ inv_gamma(6,3);
-  tau_pr ~ inv_gamma(10,2);
+  tau_pr ~ inv_gamma(11,1);
 	rho ~ normal(rho_pr, 0.1);		// lengthscale GP
-	tau ~ normal(tau_pr, 0.1);		// magnitude GP
+	tau ~ normal(tau_pr, 0.05);		// magnitude GP
 	zeta ~ normal(0,1);   	  // latent variables for approx. Gaussian Process
 	
   // likelihood
