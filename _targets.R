@@ -14,10 +14,8 @@ models <- tribble(
   "bt1.1", "stan/bt1.1.stan", "Basic Bradley-Terry",
   "bt2.1", "stan/bt2.1.stan", "Informative (Gamma) Prior",
   "bt4", "stan/bt4.stan", "Home advantage",
-  "bt5", "stan/bt5.stan", "Time Dependent Strengths"
-  # "bt6", "stan/bt6.stan", "bt5, with qualifying time diff predictor",
-  # "bt6.1", "stan/bt6.1.stan", "bt5, with qualifying time diff predictor",
-  # "bt6.2", "stan/bt6.2.stan", "bt5, with qualifying time diff predictor"
+  "bt5", "stan/bt5.stan", "Time Dependent Strengths",
+  "bt6", "stan/bt6.stan", "Qualifying Times"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
