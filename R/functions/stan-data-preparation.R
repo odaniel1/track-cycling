@@ -36,7 +36,7 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     loser_at_home = matches_df$loser_at_home,
     date_index_R = c(rider_date_start$pos, nrow(days_df)+1),
     rider_dates = days_df$years_to_start,
-    B = 15,
+    B = 10,
     qual_diff = matches_df$winner_qual_time_diff
   )
   
