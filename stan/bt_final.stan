@@ -118,7 +118,7 @@ transformed parameters{
 	vector[D] f;       // approximate GP
 	vector[D] alphaD;  // approx. GP with centered on average strength
   vector[M] delta;   // match differences
- real eta_theta[R];
+  real eta_theta[R];
   
   for(r in 1:R){
     
@@ -161,31 +161,5 @@ model{
 	// qualifying time difference;
 	kappa ~ normal(2,4);
 
-  head(sprints, T) ~ match_logit(head(delta, T));
-}
-
-generated quantities {
-  // maximum theoretical strength difference between two riders
-  real<lower=0> delta_max = max(alpha0) - min(alpha0);
-  
-  // Calculate log-loss, match log-loss and accuracy. A separate value is returned
-  // for training/evaluation data, and within each of these the metrics are further
-  // broken down by round (5 rounds in total) and the total (6th entry in vectors).
-  vector[6] training_accuracy = rep_vector(0,6);
-  vector[6] evaluation_accuracy = rep_vector(0,6);
-  vector[6] training_match_log_loss = rep_vector(0,6);
-  vector[6] evaluation_match_log_loss = rep_vector(0,6);
-
-  // Training data 
-  for(r in 1:5){
-    training_accuracy[r] = accuracy(delta, split_round_index[r], split_round_index[r+1]-1);
-    training_match_log_loss[r] = match_log_loss(sprints, delta, split_round_index[r], split_round_index[r+1]-1);
-    evaluation_accuracy[r] = accuracy(delta, split_round_index[r+5], split_round_index[r+6]-1);
-    evaluation_match_log_loss[r] = match_log_loss(sprints, delta, split_round_index[r+5], split_round_index[r+6]-1);
-  }
-  
-    training_accuracy[6] = accuracy(delta,1, T);
-    training_match_log_loss[6] = match_log_loss(sprints, delta, 1,T);
-    evaluation_accuracy[6] = accuracy(delta, T+1, M);
-    evaluation_match_log_loss[6] = match_log_loss(sprints, delta, T+1, M);
+  sprints ~ match_logit(delta);
 }
