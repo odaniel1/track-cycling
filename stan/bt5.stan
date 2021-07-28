@@ -1,4 +1,3 @@
-
 functions {
   real match_logit_lpmf(int[] s, vector delta){
     real lpmf = 0;
@@ -37,29 +36,14 @@ functions {
   }
   
   // basis function approx. to GPs, developed by Riutort-Mayol et al. arxiv.org/2004.11408
-  // implementation adapted from github.com/gabriuma/basis_functions_approach_to_GP
-
-  // square root of m-th eigenvalue (of Laplacian with Dirichlet bnd. conds.)
-  real sqrt_lambda(real L, int m){ return m * pi()/(2 * L); }
-  
-  // m-th eigenvalue
-  real lambda(real L, int m){ return sqrt_lambda(L, m)^2;}
-  
-  // m-th eigenfunction
-  vector phi(real L, int m, vector x){
-    return (1/sqrt(L)) * sin( sqrt_lambda(L,m) * (L + x));
-  }  
-  
-  // spectral density (spd) of exponentiated quadratic (exp_quad) kernel
-  real spd_exp_quad(real tau, real rho, real w){
-    return tau^2 * sqrt(2 * pi()) * rho * exp(-0.5 * (rho * w)^2);
+  // implementation from
+  // https://github.com/avehtari/casestudies/blob/master/Motorcycle/gpbasisfun_functions.stan
+  vector diagSPD_exp_quad(real alpha, real rho, real L, int B) {
+  return sqrt((alpha^1) * sqrt(2*pi()) * rho * exp(-0.5*(rho*pi()/2/L)^2 * linspaced_vector(B, 1, B)^2));
   }
   
-  // diagonal matrix for eigen-decomposition of exponentiated quadratic kernel
-  vector diag_exp_quad(real L, int B, real tau, real rho){
-    vector[B] diag_mat;
-    for(b in 1:B) diag_mat[b] = spd_exp_quad(tau, rho, sqrt_lambda(L,b));
-    return diag_mat;
+  matrix PHI(int N, int B, real L, vector x) {
+  return sin(diag_post_multiply(rep_matrix(pi()/(2*L) * (x+L), B), linspaced_vector(B, 1, B)))/sqrt(L);
   }
 }
 
@@ -94,17 +78,16 @@ data {
 transformed data {
   vector[D] d_sc;  // rider dates centred/scaled
   real<lower=0> L; // GP basis function window length
-  matrix[D,B] PHI; // GP basis function matrix
+  matrix[D,B] PHI_f; // GP basis function matrix
   
   {
     real mu_d = mean(rider_dates);
     real sd_d = sd(rider_dates);
     d_sc = (rider_dates-mu_d)/sd_d;
-    L = (max(d_sc) - min(d_sc)) * 5.0/2.0;
-
-    // rider GP approximation      
-    for(b in 1:B) PHI[,b] = phi(L,b,d_sc);
+    L = 1.5 * max(d_sc); // set based on https://avehtari.github.io/casestudies/Motorcycle/motorcycle.html
   }
+  
+  PHI_f = PHI(D, B, L, d_sc);
 }
 
 parameters {
@@ -131,17 +114,20 @@ transformed parameters{
   vector[M] delta;   // match differences
  
   for(r in 1:R){
+    
+    vector[B] diagSPD_f_r = diagSPD_exp_quad(tau[r], rho[r], L, B);
+    
     // basis function approx. to Gaussian Process
     f[date_index_R[r]:(date_index_R[r+1]-1)] =
-    PHI[date_index_R[r]:(date_index_R[r+1]-1),] *  (sqrt(diag_exp_quad(L, B, tau[r], rho[r])) .* segment(zeta, 1 + (r-1)*B, B));
-    
+    PHI_f[date_index_R[r]:(date_index_R[r+1]-1),] * (diagSPD_f_r .* segment(zeta, 1 + (r-1)*B, B));
+
     // time dependent rider strength
     alphaD[date_index_R[r]:(date_index_R[r+1]-1)] =  alpha0[r] + f[date_index_R[r]:(date_index_R[r+1]-1)];
   }
 	  
 	for(m in 1:M){
 	  delta[m] = alphaD[date_index_R[winner_id[m]] + winner_date_no[m]] - alphaD[date_index_R[loser_id[m]] + loser_date_no[m]] +
-      winner_at_home[m] * (eta + theta[winner_id[m]]) - loser_at_home[m] * (eta + theta[winner_id[m]]);
+      winner_at_home[m] * (eta + theta[winner_id[m]]) - loser_at_home[m] * (eta + theta[loser_id[m]]);
 	}
 }
 
@@ -158,10 +144,10 @@ model{
   // Gaussian process lengthscale/magnitude
   rho_pr ~ inv_gamma(6,3);
   tau_pr ~ inv_gamma(10,2);
-	rho ~ normal(0,rho_pr);		// lengthscale GP
-	tau ~ normal(0,tau_pr);		// magnitud GP
+	rho ~ normal(rho_pr, 0.1);		// lengthscale GP
+	tau ~ normal(tau_pr, 0.1);		// magnitude GP
 	zeta ~ normal(0,1);   	  // latent variables for approx. Gaussian Process
-
+	
   // likelihood
   head(sprints, T) ~ match_logit(head(delta, T));
 }
