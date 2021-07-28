@@ -107,7 +107,8 @@ prepare_rider_days <- function(results_df, riders_df){
     left_join(riders_df, by = c("rider" = "rider_name")) %>%
     distinct(rider_id, date) 
   
-  rider_today <- tibble()
+  rider_today <- rider_days %>% distinct(rider_id) %>%
+    mutate(date = today())
   
   rider_days <- bind_rows(rider_days, rider_today) %>%
     distinct() %>%
