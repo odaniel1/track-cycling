@@ -72,6 +72,14 @@ prepare_results <- function(races_df){
   return(results)
 }
 
+prepare_events <- function(races_df){
+  events <- races_df %>%
+    distinct(event, year, gender, location_country_code) %>%
+    mutate(event_id = 1:n())
+  
+  return(events)
+}
+  
 prepare_teams <- function(path, results_df){
   
   team_lookup <- read_csv(path) %>%
@@ -107,10 +115,22 @@ prepare_rider_days <- function(results_df, riders_df){
     left_join(riders_df, by = c("rider" = "rider_name")) %>%
     distinct(rider_id, date) 
   
-  rider_today <- rider_days %>% distinct(rider_id) %>%
-    mutate(date = today())
+  # add a date for the start of the track cycling at tokyo 2020
+  rider_olympics <- rider_days %>% distinct(rider_id) %>%
+    mutate(date = ymd(20210802))
   
-  rider_days <- bind_rows(rider_days, rider_today) %>%
+  rider_days <- bind_rows(rider_days, rider_olympics)
+  
+  # add additional dates for athletes to be used as example data
+  rider_extras <- riders_df %>%
+    filter(rider_name %in% c("LEE WAI SZE", "VOINOVA ANASTASIIA", "HINZE EMMA")) %>%
+    select(rider_id) %>%
+    crossing(date = seq(min(rider_days$date), max(rider_days$date), length.out = 20))
+  
+  
+  rider_days <- bind_rows(rider_days, rider_extras)
+  
+  rider_days <- rider_days %>%
     distinct() %>%
     arrange(rider_id, date) %>%
     group_by(rider_id) %>%
@@ -127,7 +147,7 @@ prepare_rider_days <- function(results_df, riders_df){
   
 }
 
-prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df){
+prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df, events_df){
   
   matches <- results_df %>%
     # reformat in wide: one row per match, and add rider names
@@ -158,7 +178,7 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df){
       loser_at_home = if_else(win_count_2 > win_count_1, 1 * (location_country_code == country_code_2),1 * (location_country_code == country_code_2)),
     )
   
-  # # add winner/loser centred qualifying time 
+  # add winner/loser qualifying time 
   matches <- matches %>%
     left_join(qual_df %>% rename(rider_1 = rider, qual_time_1 = time)) %>%
     left_join(qual_df %>% rename(rider_2 = rider, qual_time_2 = time)) %>%
@@ -167,6 +187,10 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df){
         if_else(winner_id == rider_id_1, qual_time_1 - qual_time_2, qual_time_2 - qual_time_1)
     ) %>%
     filter(!is.na(winner_qual_time_diff))
+  
+  # add event id
+  matches <- matches %>%
+    left_join(events_df)
 
   matches <- matches %>%
     filter(!is.na(rider_1) & !is.na(rider_2)) %>%

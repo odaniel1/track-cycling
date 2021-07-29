@@ -16,7 +16,8 @@ models <- tribble(
   "bt4", "stan/bt4.stan", "Home advantage",
   "bt5", "stan/bt5.stan", "Time Dependent Strengths",
   "bt6", "stan/bt6.stan", "Qualifying Times",
-  "bt_final", "stan/bt_final.stan", "Fit to all data"
+  "bt_final", "stan/bt_final.stan", "Fit to all data",
+  "gp_prior", "stan/gp_prior.stan", "GP Prior only"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
@@ -32,6 +33,8 @@ list(
   
   tar_target(results, prepare_results(races)),
   
+  tar_target(events, prepare_events(races)),
+  
   tar_target(qualifying, prepare_qualifying(races)),
 
   tar_target(teams, prepare_teams(team_path, results)),
@@ -40,7 +43,7 @@ list(
   
   tar_target(rider_days, prepare_rider_days(results, riders)),
 
-  tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying)),
+  tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying, events)),
   
   tar_target(pairings, prepare_pairings(matches)),
   
