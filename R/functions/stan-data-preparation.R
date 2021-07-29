@@ -25,6 +25,7 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     T = sum(matches_df$split == "training"),
     P = nrow(pairing_df), # No. Pairings, models >= 4.0
     D = nrow(days_df),
+    E = max(matches_df$event_id),
     winner_id = matches_df$winner_id, # ID of first rider
     loser_id = matches_df$loser_id, # ID of second rider
     pairings = as.matrix(pairing_df %>% select(min_rider_id, max_rider_id)),
@@ -37,7 +38,8 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     date_index_R = c(rider_date_start$pos, nrow(days_df)+1),
     rider_dates = days_df$years_to_start,
     B = 10,
-    qual_diff = matches_df$winner_qual_time_diff
+    qual_diff = matches_df$winner_qual_time_diff,
+    event = matches_df$event_id
   )
   
   return(stan_data)

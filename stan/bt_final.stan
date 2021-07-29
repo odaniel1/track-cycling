@@ -53,6 +53,7 @@ data {
   int<lower=0> M; // Matches
   int<lower=0,upper = M> T; // Training matches
   int<lower=0> D; // Dates
+  int<lower=0> E; // Events
     
   // Index for where train/test and round splits start 
   int<lower=1,upper=M> split_round_index[11];
@@ -76,6 +77,7 @@ data {
   
   // qualifying time difference;
   real qual_diff[M];
+  int event[M];
 }
 
 transformed data {
@@ -110,8 +112,10 @@ parameters {
 	vector<lower=0>[R] tau; // magnitude
 	vector[R*B] zeta; 	    // latent variables
 	
-	// qualifying time difference;
+	// qualifying time differences;
 	real kappa;
+	real<lower=0> psi;
+	real phi[E];
 }
 
 transformed parameters{
@@ -137,7 +141,7 @@ transformed parameters{
 	for(m in 1:M){
 	  delta[m] = alphaD[date_index_R[winner_id[m]] + winner_date_no[m]] - alphaD[date_index_R[loser_id[m]] + loser_date_no[m]] +
       (winner_at_home[m] * eta_theta[winner_id[m]]) - (loser_at_home[m] * eta_theta[loser_id[m]]) -
-      kappa * qual_diff[m];
+      (kappa + phi[event[m]]) * qual_diff[m];
 	}
 }
 
@@ -159,7 +163,9 @@ model{
 	zeta ~ normal(0,1);   	  // latent variables for approx. Gaussian Process
 
 	// qualifying time difference;
-	kappa ~ normal(2,4);
+	kappa ~ normal(4,4);
+	psi ~ normal(0,0.5);
+	phi ~ normal(0, psi);
 
   sprints ~ match_logit(delta);
 }
