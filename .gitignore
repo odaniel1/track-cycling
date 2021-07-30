@@ -3,6 +3,9 @@
 .RData
 .Ruserdata
 track-cycling.Rproj
+_targets
+stan/*
+!stan/*.stan
 0_Raw-Data/Data
 0_Raw-Data/Functions/generate_race_lookup.R
 **.rds*
