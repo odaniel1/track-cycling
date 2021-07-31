@@ -42,9 +42,6 @@ data {
   int<lower=0> R; // Riders
   int<lower=0> M; // Matches
   int<lower=0,upper = M> T; // Training matches
-  
-  // Index for where train/test and round splits start 
-  int<lower=1,upper=M> split_round_index[11];
 
   // Match results
   int<lower=1,upper=R> winner_id[M]; // ID's specifying riders in match
@@ -103,21 +100,13 @@ generated quantities {
   // Calculate log-loss, match log-loss and accuracy. A separate value is returned
   // for training/evaluation data, and within each of these the metrics are further
   // broken down by round (5 rounds in total) and the total (6th entry in vectors).
-  vector[6] training_accuracy = rep_vector(0,6);
-  vector[6] evaluation_accuracy = rep_vector(0,6);
-  vector[6] training_match_log_loss = rep_vector(0,6);
-  vector[6] evaluation_match_log_loss = rep_vector(0,6);
+  real training_accuracy;
+  real evaluation_accuracy;
+  real training_match_log_loss;
+  real evaluation_match_log_loss;
 
-  // Training data 
-  for(r in 1:5){
-    training_accuracy[r] = accuracy(delta, split_round_index[r], split_round_index[r+1]-1);
-    training_match_log_loss[r] = match_log_loss(sprints, delta, split_round_index[r], split_round_index[r+1]-1);
-    evaluation_accuracy[r] = accuracy(delta, split_round_index[r+5], split_round_index[r+6]-1);
-    evaluation_match_log_loss[r] = match_log_loss(sprints, delta, split_round_index[r+5], split_round_index[r+6]-1);
-  }
-  
-    training_accuracy[6] = accuracy(delta,1, T);
-    training_match_log_loss[6] = match_log_loss(sprints, delta, 1,T);
-    evaluation_accuracy[6] = accuracy(delta, T+1, M);
-    evaluation_match_log_loss[6] = match_log_loss(sprints, delta, T+1, M);
+  training_accuracy = accuracy(delta,1, T);
+  training_match_log_loss = match_log_loss(sprints, delta, 1,T);
+  evaluation_accuracy = accuracy(delta, T+1, M);
+  evaluation_match_log_loss = match_log_loss(sprints, delta, T+1, M);
 }
