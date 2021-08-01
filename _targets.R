@@ -47,8 +47,6 @@ list(
 
   tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying, events)),
   
-  tar_target(pairings, prepare_pairings(matches)),
-  
   tar_target(stan_data_without_qual, prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days)),
   
   tar_target(stan_data_with_qual, prepare_stan_data(riders, matches, pairings, rider_days)),
@@ -66,7 +64,7 @@ tar_stan_mcmc(
 
 tar_stan_mcmc(
   name = bt_qual,
-  stan_files = models$path[models$model_name %in% c("bt6")],
+  stan_files = models$path[models$model_name %in% c("bt6", "bt_final")],
   data = stan_data_with_qual,
   iter_warmup = 1999, iter_sampling = 2000,
   parallel_chains = 4,

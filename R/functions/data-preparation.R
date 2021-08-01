@@ -203,9 +203,10 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df, ev
     left_join(qual_df %>% rename(rider_2 = rider, qual_time_2 = time) %>% select(-round,-date, -team)) %>%
     mutate(
       winner_qual_time_diff =
-        if_else(winner_id == rider_id_1, qual_time_1 - qual_time_2, qual_time_2 - qual_time_1)
+        if_else(winner_id == rider_id_1, qual_time_1 - qual_time_2, qual_time_2 - qual_time_1),
+      winner_qual_time_diff = if_else(round == 'Qualifying', 0, winner_qual_time_diff)
     ) %>%
-    filter(!is.na(winner_qual_time_diff))
+    filter(!is.na(winner_qual_time_diff), rider_1 != rider_2)
   
   # add event id
   matches <- matches %>%
@@ -216,16 +217,4 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df, ev
     arrange(desc(split), date, round, heat_id)
   
   return(matches)
-}
-
-prepare_pairings <- function(matches_df){
-  pairings <- matches_df %>%
-    mutate(
-      min_rider_id = pmin(rider_id_1, rider_id_2),
-      max_rider_id = pmax(rider_id_1, rider_id_2)
-    ) %>% 
-    count(min_rider_id, max_rider_id, sort = TRUE) %>%
-    filter(n > 1)
-  
-  return(pairings)
 }
