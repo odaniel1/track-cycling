@@ -8,6 +8,7 @@ location_lookup <- function(){
     "France",    "FRA",
     "Germany",   "GER",
     "New Zealand","NZL",
+    "Japan", "JAP",
     "Poland",    "POL",
     "United Kingdom", "GBR",
     "Russia",    "RUS",

@@ -70,5 +70,22 @@ tar_stan_mcmc(
   parallel_chains = 4,
   seed = 1414214,
   refresh = 500
-)
+),
+
+## ---- FORECASTING ---------------------------------------------------------
+
+tar_target(fcst_lookup, 'data/MANUAL-forecast-lookup.csv'),
+
+tar_target(fcst_rounds, read_csv('data/olympic-rounds.csv')),
+
+tar_target(fcst_races, prepare_forecast_races(fcst_lookup)),
+
+tar_target(fcst_qualifying, prepare_forecast_qualifying(fcst_races, riders)),
+
+tar_target(fcst_strength_draws,
+           prepare_event_strength_draws(bt_qual_draws_bt_final,rider_days, fcst_qualifying)),
+
+tar_target(fcst_tournament_draws,
+           forecast_tournament_draws(fcst_strength_draws, fcst_rounds, podium_only = TRUE))
+
 )
