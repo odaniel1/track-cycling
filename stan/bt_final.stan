@@ -54,9 +54,6 @@ data {
   int<lower=0,upper = M> T; // Training matches
   int<lower=0> D; // Dates
   int<lower=0> E; // Events
-    
-  // Index for where train/test and round splits start 
-  int<lower=1,upper=M> split_round_index[11];
   
   int<lower=1,upper=R> winner_id[M]; // ID's specifying riders in match
   int<lower=1,upper=R> loser_id[M];

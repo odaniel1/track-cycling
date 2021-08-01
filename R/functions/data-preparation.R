@@ -18,9 +18,11 @@ location_lookup <- function(){
   )
 }
 
-prepare_races <- function(path){
+prepare_races <- function(tissot_path, manual_path){
   
-  races <- read_csv(path) %>%
+  races <- bind_rows(
+    read_csv(tissot_path) %>% mutate(csv_path = paste0('../tissot-scraper/',csv_path)),
+    read_csv(manual_path)) %>%
     filter(
       csv_cached == TRUE,
       race   ==   'Individual Sprint',
@@ -40,35 +42,52 @@ prepare_qualifying <- function(races_df){
   qualifying <- races_df %>%
     filter(round == 'Qualifying')
   
-  qual_results <- vroom::vroom(paste0('../tissot-scraper/',qualifying$csv_path)) %>% 
+  qual_results <- vroom::vroom(qualifying$csv_path, id = "file_path") %>% 
     bind_rows() %>%
-    left_join(races_df %>% select(csv_path, year, location_country_code, split)) %>%
-    select(event, year, location_country_code, gender, race, rider, time) %>%
-    filter(time > 0)
+    left_join(races_df %>% select(csv_path, year, location_country_code, split), by = c("file_path" = "csv_path")) %>%
+    select(split, event, year, date, location_country_code, gender, race, round, rider, team, time) %>%
+    filter(time > 0) %>%
+    arrange(desc(split), date)
   
   return(qual_results)
 }
 
-prepare_results <- function(races_df){
+prepare_results <- function(races_df, qualifying_df){
   
   races <- races_df %>%
     filter(round  !=   'Qualifying')
   
-  results <- vroom::vroom(paste0('../tissot-scraper/',races$csv_path)) %>% 
+  results <- vroom::vroom(races$csv_path,  id =  "file_path") %>% 
     bind_rows() %>%
-    left_join(races_df %>% select(csv_path, year, location_country_code, split)) %>%
+    left_join(races_df %>% select(csv_path, year, location_country_code, split), by = c("file_path" = "csv_path")) %>%
     select(split, event, date, year, location_country_code, gender, race, round, rider, team, heat_id, win_count)
   
-  results <- results %>%
+  # a bit of a bodge to create data from the qualifying rounds.
+  qualifying_heat_1 <- qualifying_df %>%
+    group_by(event, year, date, location_country_code, gender) %>%
+    mutate(heat_id = sample(n(), n()))
+  
+  qualifying_heat_2 <- qualifying_df %>%
+    group_by(event, year, date, location_country_code, gender) %>%
+    mutate(heat_id = sample(n(), n()))
+  
+  qualifying_results <- bind_rows(qualifying_heat_1, qualifying_heat_2) %>%
+    ungroup() %>%
+    arrange(event, year, date, location_country_code, gender, heat_id, time) %>%
+    group_by(event, year, date, location_country_code, gender, heat_id) %>%
+    mutate(win_count = 2 - 1:n()) %>%
+    select(-time)
+  
+  results <- bind_rows(results, qualifying_results) %>%
     group_by(date, race, round, gender, heat_id) %>%
     mutate(seed = paste0('seed_',1:n())) %>%
     ungroup()
   
   results <- results %>%
     mutate(
-      round = factor(round, levels = c("1-16 Finals", "1-8 Finals", "Quarterfinals", "Semifinals", "Finals"))
+      round = factor(round, levels = c("Qualifying", "1-16 Finals", "1-8 Finals", "Quarterfinals", "Semifinals", "Finals"))
     )
-
+  
   return(results)
 }
 
@@ -180,13 +199,14 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df, ev
   
   # add winner/loser qualifying time 
   matches <- matches %>%
-    left_join(qual_df %>% rename(rider_1 = rider, qual_time_1 = time)) %>%
-    left_join(qual_df %>% rename(rider_2 = rider, qual_time_2 = time)) %>%
+    left_join(qual_df %>% rename(rider_1 = rider, qual_time_1 = time) %>% select(-round,-date, -team)) %>%
+    left_join(qual_df %>% rename(rider_2 = rider, qual_time_2 = time) %>% select(-round,-date, -team)) %>%
     mutate(
       winner_qual_time_diff =
-        if_else(winner_id == rider_id_1, qual_time_1 - qual_time_2, qual_time_2 - qual_time_1)
+        if_else(winner_id == rider_id_1, qual_time_1 - qual_time_2, qual_time_2 - qual_time_1),
+      winner_qual_time_diff = if_else(round == 'Qualifying', 0, winner_qual_time_diff)
     ) %>%
-    filter(!is.na(winner_qual_time_diff))
+    filter(!is.na(winner_qual_time_diff), rider_1 != rider_2)
   
   # add event id
   matches <- matches %>%
@@ -197,16 +217,4 @@ prepare_matches <- function(results_df, riders_df, days_df, team_df, qual_df, ev
     arrange(desc(split), date, round, heat_id)
   
   return(matches)
-}
-
-prepare_pairings <- function(matches_df){
-  pairings <- matches_df %>%
-    mutate(
-      min_rider_id = pmin(rider_id_1, rider_id_2),
-      max_rider_id = pmax(rider_id_1, rider_id_2)
-    ) %>% 
-    count(min_rider_id, max_rider_id, sort = TRUE) %>%
-    filter(n > 1)
-  
-  return(pairings)
 }

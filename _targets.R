@@ -25,17 +25,19 @@ list(
   
   tar_target(model_list, models),
   
-  tar_target(race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
+  tar_target(tissot_race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
+  
+  tar_target(manual_race_path, "data/MANUAL-race-lookup.csv", format = 'file'),
   
   tar_target(team_path, "../tissot-scraper/data/team-lookup.csv", format = 'file'),
 
-  tar_target(races, prepare_races(race_path)),
-  
-  tar_target(results, prepare_results(races)),
-  
-  tar_target(events, prepare_events(races)),
+  tar_target(races, prepare_races(tissot_race_path, manual_race_path)),
   
   tar_target(qualifying, prepare_qualifying(races)),
+  
+  tar_target(results, prepare_results(races, qualifying)),
+  
+  tar_target(events, prepare_events(races)),
 
   tar_target(teams, prepare_teams(team_path, results)),
   
@@ -45,18 +47,28 @@ list(
 
   tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying, events)),
   
-  tar_target(pairings, prepare_pairings(matches)),
+  tar_target(stan_data_without_qual, prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days)),
   
-  tar_target(stan_data, prepare_stan_data(riders, matches, pairings, rider_days)),
+  tar_target(stan_data_with_qual, prepare_stan_data(riders, matches, pairings, rider_days)),
   
 ## ---- STAN MODELS --------------------------------------------------------- 
 tar_stan_mcmc(
     name = bt,
     stan_files = models$path,
-    data = stan_data,
+    data = stan_data_without_qual,
     iter_warmup = 1999, iter_sampling = 2000,
     parallel_chains = 4,
     seed = 1414214,
     refresh = 500
-  )
+  ),
+
+tar_stan_mcmc(
+  name = bt_qual,
+  stan_files = models$path[models$model_name %in% c("bt6", "bt_final")],
+  data = stan_data_with_qual,
+  iter_warmup = 1999, iter_sampling = 2000,
+  parallel_chains = 4,
+  seed = 1414214,
+  refresh = 500
+)
 )
