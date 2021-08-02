@@ -1,5 +1,5 @@
 
-prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
+prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df, training = TRUE){
 
   # arrange so all training data preceeds evaluation data
   matches_df <- matches_df  %>%
@@ -20,6 +20,7 @@ prepare_stan_data <- function(riders_df, matches_df, pairing_df, days_df){
     arrange(rider_id)
   
   stan_data <- list(
+    training = 1 * training,
     R = nrow(riders_df),  # No. Riders
     M = nrow(matches_df), # No Matches
     T = sum(matches_df$split == "training"),
