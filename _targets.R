@@ -20,8 +20,10 @@ models <- tribble(
   "gp_prior", "stan/gp_prior.stan", "GP Prior only"
 )
 
+genders <- tibble(gender = c("Men", "Women"))
+
 ## ---- DATA PREPARATION ----------------------------------------------------
-list(
+tar_map(values = genders,
   
   tar_target(model_list, models),
   
@@ -31,42 +33,46 @@ list(
   
   tar_target(team_path, "../tissot-scraper/data/team-lookup.csv", format = 'file'),
 
-  tar_target(races, prepare_races(tissot_race_path, manual_race_path)),
+  tar_target(races, prepare_races(tissot_race_path, manual_race_path, gender)),
   
   tar_target(qualifying, prepare_qualifying(races)),
-  
+
   tar_target(results, prepare_results(races, qualifying)),
-  
+
   tar_target(events, prepare_events(races)),
 
   tar_target(teams, prepare_teams(team_path, results)),
-  
+
   tar_target(riders, prepare_riders(results)),
-  
+
   tar_target(rider_days, prepare_rider_days(results, riders)),
 
   tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying, events)),
-  
-  tar_target(stan_data_without_qual, prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days)),
-  
-  tar_target(stan_data_with_qual, prepare_stan_data(riders, matches, pairings, rider_days)),
+
+  tar_target(stan_data_without_qual, prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days, training = TRUE)),
+
+  tar_target(stan_data_with_qual, prepare_stan_data(riders, matches, pairings, rider_days, training = TRUE)),
   
 ## ---- STAN MODELS --------------------------------------------------------- 
-tar_stan_mcmc(
-    name = bt,
-    stan_files = models$path,
-    data = stan_data_without_qual,
-    iter_warmup = 1999, iter_sampling = 2000,
-    parallel_chains = 4,
-    seed = 1414214,
-    refresh = 500
-  ),
+# tar_stan_mcmc(
+#     name = bt,
+#     stan_files = models$path,
+#     data = stan_data_without_qual,
+#     iter_warmup = 1999, iter_sampling = 2000,
+#     parallel_chains = 4,
+#     seed = 1414214,
+#     refresh = 500
+#   ),
+# 
+tar_target(stan_data_with_qual_full, prepare_stan_data(riders, matches, pairings, rider_days, training = FALSE)),
 
 tar_stan_mcmc(
   name = bt_qual,
-  stan_files = models$path[models$model_name %in% c("bt6", "bt_final")],
+  stan_files = models$path[models$model_name %in% c("bt6")],
   data = stan_data_with_qual,
-  iter_warmup = 1999, iter_sampling = 2000,
+  variables = c("sigma","eta_theta","kappa", "psi", "alphaD"),
+  iter_warmup = 2000, iter_sampling = 2000,
+  thin = 8,
   parallel_chains = 4,
   seed = 1414214,
   refresh = 500
@@ -78,14 +84,18 @@ tar_target(fcst_lookup, 'data/MANUAL-forecast-lookup.csv'),
 
 tar_target(fcst_rounds, read_csv('data/olympic-rounds.csv')),
 
-tar_target(fcst_races, prepare_forecast_races(fcst_lookup)),
+tar_target(fcst_races, prepare_forecast_races(fcst_lookup,gender)),
 
 tar_target(fcst_qualifying, prepare_forecast_qualifying(fcst_races, riders)),
 
 tar_target(fcst_strength_draws,
-           prepare_event_strength_draws(bt_qual_draws_bt_final,rider_days, fcst_qualifying)),
+           prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
 tar_target(fcst_tournament_draws,
-           forecast_tournament_draws(fcst_strength_draws, fcst_rounds, podium_only = TRUE))
+           forecast_tournament_draws(fcst_strength_draws, fcst_rounds, .samples = 100, round_codes = "Gold"))
+
+## ---- BETTING --------------------------------------------------------------
+
+# tar_target(odds_returns, prepare_odds_and_stakes('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', fcst_tournament_draws,gender))
 
 )

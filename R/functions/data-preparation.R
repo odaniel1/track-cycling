@@ -19,7 +19,7 @@ location_lookup <- function(){
   )
 }
 
-prepare_races <- function(tissot_path, manual_path){
+prepare_races <- function(tissot_path, manual_path, race_gender = 'Women'){
   
   races <- bind_rows(
     read_csv(tissot_path) %>% mutate(csv_path = paste0('../tissot-scraper/',csv_path)),
@@ -27,7 +27,7 @@ prepare_races <- function(tissot_path, manual_path){
     filter(
       csv_cached == TRUE,
       race   ==   'Individual Sprint',
-      gender == 'Women'
+      gender == race_gender
     ) %>%
     left_join(location_lookup())
   
