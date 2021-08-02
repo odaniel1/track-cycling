@@ -1,11 +1,11 @@
 
-prepare_forecast_races <- function(forecast_lookup){
+prepare_forecast_races <- function(forecast_lookup, race_gender = 'Women'){
   
   races <- read_csv(forecast_lookup) %>%
     filter(
       csv_cached == TRUE,
       race   ==   'Individual Sprint',
-      gender == 'Women'
+      gender == race_gender
     ) %>%
     left_join(location_lookup())
 
@@ -90,14 +90,19 @@ rename_rider_fields <- function(standings_df, rider_no){
     rename_with(~paste0(., "_", rider_no))
 }
 
-forecast_tournament_draws <- function(draws_df, round_index, podium_only = TRUE){
+forecast_tournament_draws <- function(draws_df, round_index, .samples = 1, round_codes = NULL){
   
   # Set a "plan" for how the code should run.
   plan(multisession, workers = 4)
   
   tournament_draws <- draws_df %>%
+    filter(.draw %% 10 == 0) %>%
     group_nest(.draw) %>%
-    mutate(tournament = future_map(data, ~forecast_tournament(., round_index, podium_only)))
+    mutate(
+      tournament = 
+        # future_map(data, ~forecast_tournament(., round_index, round_codes))
+        future_map(data, .f = function(dat){map_df(1:.samples, ~forecast_tournament(dat,round_index, round_codes))})
+    )
   
   tournament_draws <- tournament_draws %>%
     select(.draw, tournament) %>%
@@ -106,7 +111,7 @@ forecast_tournament_draws <- function(draws_df, round_index, podium_only = TRUE)
   return(tournament_draws)
 }
 
-forecast_tournament <- function(qualifying, round_index, podium_only = TRUE){
+forecast_tournament <- function(qualifying, round_index, round_codes = NULL){
   
   results <- qualifying
   
@@ -127,9 +132,8 @@ forecast_tournament <- function(qualifying, round_index, podium_only = TRUE){
     results <- forecast_event_round(results, round_index)
   }
   
-  if(podium_only == TRUE){
-    results <- results %>%
-      filter(round_code %in% c("Gold", "Silver", "Bronze"))
+  if(!is.null(round_codes)){
+    results <- results %>% filter(round_code %in% round_codes)
   }
   
   return(results)
