@@ -92,7 +92,7 @@ tar_target(fcst_strength_draws,
            prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
 tar_target(fcst_tournament_draws,
-           forecast_tournament_draws(fcst_strength_draws, fcst_rounds, .samples = 100, round_codes = "Gold"))
+           forecast_tournament(fcst_strength_draws %>% filter(.draw <= 1000), fcst_rounds, samples = 100, gold_only = TRUE))
 
 ## ---- BETTING --------------------------------------------------------------
 

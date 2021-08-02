@@ -82,144 +82,117 @@ prepare_event_strength_draws <- function(draws_df,  days_df, qual_df){
   return(rider_draws)
 }
 
-
-
-rename_rider_fields <- function(standings_df, rider_no){
-  standings_df %>%
-    select(rider_code= round_code, rider, rider_id, time, strength = strength) %>%
-    rename_with(~paste0(., "_", rider_no))
-}
-
-forecast_tournament_draws <- function(draws_df, round_index, .samples = 1, round_codes = NULL){
+forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, gold_only = TRUE){
   
-  # Set a "plan" for how the code should run.
-  plan(multisession, workers = 4)
+  sample_rounds <- round_index %>%
+    crossing(.sample = 1:samples, .draw = unique(qualifying_strengths$.draw)) %>%
+    mutate(unif_sample = runif(n())) %>%
+    group_nest(round_no, keep = TRUE)
   
-  tournament_draws <- draws_df %>%
-    filter(.draw %% 10 == 0) %>%
-    group_nest(.draw) %>%
-    mutate(
-      tournament = 
-        # future_map(data, ~forecast_tournament(., round_index, round_codes))
-        future_map(data, .f = function(dat){map_df(1:.samples, ~forecast_tournament(dat,round_index, round_codes))})
-    )
+  init <- qualifying_strengths %>% group_by(.draw)
   
-  tournament_draws <- tournament_draws %>%
-    select(.draw, tournament) %>%
-    unnest()
-  
-  return(tournament_draws)
-}
-
-forecast_tournament <- function(qualifying, round_index, round_codes = NULL){
-  
-  results <- qualifying
-  
-  if(max(results$time) == 0){
-    results <- results %>% arrange(desc(strength))
+  if(max(init$time) == 0){
+    init <- init %>% arrange(desc(strength))
   } else {
-    results <- results %>% arrange(time)
+    init <- init %>% arrange(time)
   }
   
-  results <- results %>% mutate(
-      round_no = 0,
-      round_code = paste0('N',1:n())
-    )
+  init <- init %>%
+    mutate(round_code = paste0('N',1:n())) %>%
+    crossing(.sample = 1:samples) %>%
+    ungroup()
+
+    
+  forecast <- reduce(sample_rounds$data, forecast_tournament_round, .init = init)
   
-  r <- 1
-  while(r <= 9){
-    r <- r +1
-    results <- forecast_event_round(results, round_index)
-  }
+  if(gold_only == TRUE){ forecast <- forecast %>% filter(round_code == 'Gold')}
   
-  if(!is.null(round_codes)){
-    results <- results %>% filter(round_code %in% round_codes)
-  }
-  
-  return(results)
+  return(forecast)
 }
 
-forecast_event_round <- function(results_df, round_index){
+forecast_tournament_round <- function(standings, round_matches){
   
-  curr_round_no <- max(results_df$round_no) + 1
+  round_matches <- round_matches %>%
+    left_join(standings %>% select(.draw, .sample, kappa, rider_code_1 = round_code, rider_1 = rider, time_1 = time, strength_1 = strength),
+              by = c("rider_code_1", ".sample", ".draw")) %>%
+    left_join(standings %>% select(.draw, .sample, rider_code_2 = round_code, rider_2 = rider, time_2 = time, strength_2 = strength),
+              by = c("rider_code_2", ".sample", ".draw"))
   
-  kappa <- results_df$kappa[1]
-  
-  round_index <- round_index %>% filter(round_no == curr_round_no)
-  
-  if(round_index$competitors[1] == 2){
-    round_matches <- round_index %>%
-      inner_join(rename_rider_fields(results_df, rider_no = 1), by = "rider_code_1") %>%
-      inner_join(rename_rider_fields(results_df, rider_no = 2), by = "rider_code_2") %>%
+  if(round_matches$competitors[1] == 2){
+    round_matches <- round_matches %>%
       mutate(
-        time_diff = time_1 - time_2,
-        strength_diff = strength_1 - strength_2,
-        winner = 2 - rbernoulli(n(), p = plogis(kappa * time_diff + strength_diff)),
-        new_round_code_1 = if_else(winner == 1, winner_code, loser_code),
-        new_round_code_2 = if_else(winner == 2, winner_code, loser_code),        
+        prob_1 = plogis(kappa * (time_1 - time_2) + (strength_1 - strength_2)),
+        winner = case_when(
+          sprints == 1 ~ 1 + (unif_sample > prob_1),
+          TRUE         ~ 1 + (unif_sample > (3*prob_1^2 - prob_1^3))
+        ),
+        next_round_code_1 = if_else(winner == 1, winner_code, loser_code),
+        next_round_code_2 = if_else(winner == 2, winner_code, loser_code)
       )
-    
-  }
-  else{
-    round_matches <- round_index %>%
-      inner_join(rename_rider_fields(results_df, rider_no = 1), by = "rider_code_1") %>%
-      inner_join(rename_rider_fields(results_df, rider_no = 2), by = "rider_code_2") %>%
-      inner_join(rename_rider_fields(results_df, rider_no = 3), by = "rider_code_3") %>%
+  } else {
+    round_matches <- round_matches %>%
+      left_join(standings %>% select(.draw, .sample, rider_code_3 = round_code, rider_3 = rider, time_3 = time, strength_3 = strength),
+                by = c("rider_code_3", ".sample", ".draw")) %>%
       mutate(
         max_time = pmax(time_1, time_2, time_3),
-        strength_1 = strength_1 -kappa*(time_1 - max_time),
-        strength_2 = strength_2 -kappa*(time_2 - max_time),
-        strength_3 = strength_3 -kappa*(time_3 - max_time),
-        beta_1 = exp(strength_1),
-        beta_2 = exp(strength_2),
-        beta_3 = exp(strength_3),
-        F_1 = beta_1/(beta_1+beta_2+beta_3),
-        F_2 = (beta_1+beta_2)/(beta_1+beta_2+beta_3),
-        u = runif(n()),
+        beta_1 = exp(strength_1 - kappa*(time_1 - max_time)),
+        beta_2 = exp(strength_2 - kappa*(time_2 - max_time)),
+        beta_3 = exp(strength_3 - kappa*(time_3 - max_time)),
+        beta_sum = beta_1 + beta_2 + beta_3,
         winner = case_when(
-          u < F_1 ~ 1,
-          u < F_2 ~ 2,
+          unif_sample < beta_1/beta_sum ~ 1,
+          unif_sample < (beta_1 + beta_2)/beta_sum ~2,
           TRUE ~ 3
         ),
-        new_round_code_1 = if_else(winner == 1, winner_code, NA_character_),
-        new_round_code_2 = if_else(winner == 2, winner_code, NA_character_),
-        new_round_code_3 = if_else(winner == 3, winner_code, NA_character_)
-      )  
+        next_round_code_1 = if_else(winner == 1, winner_code, loser_code),
+        next_round_code_2 = if_else(winner == 2, winner_code, loser_code),
+        next_round_code_3 = if_else(winner == 3, winner_code, loser_code)
+      )
   }
   
   round_results <- bind_rows(
     round_matches %>% select(
+      .sample,
+      .draw,
       round_no,
+      kappa,
       rider = rider_1,
-      rider_id = rider_id_1, 
       time = time_1,
       strength = strength_1,
-      round_code = new_round_code_1),
+      round_code = next_round_code_1),
     round_matches  %>% select(
+      .sample,
+      .draw,
       round_no,
+      kappa,
       rider = rider_2,
-      rider_id = rider_id_2, 
       time = time_2,
       strength = strength_2,
-      round_code = new_round_code_2)
+      round_code = next_round_code_2)
   )
   
-  if(round_index$competitors[1] == 3){
+  if(round_matches$competitors[1] == 3){
     round_results <- round_results %>%
       bind_rows(
-        round_matches %>% select(
+        round_matches  %>% select(
+          .sample,
+          .draw,
           round_no,
+          kappa,
           rider = rider_3,
-          rider_id = rider_id_3, 
           time = time_3,
           strength = strength_3,
-          round_code = new_round_code_3)
+          round_code = next_round_code_3)
       )
   }
   
-  round_results <- round_results %>% mutate(kappa = kappa)
+  round_results <- round_results %>% filter(!is.na(round_code))
   
-  results_combined <- bind_rows(results_df, round_results)
+  if(str_detect(round_matches$round[1], 'Repechage')){
+    
+    round_results <- bind_rows(round_results, standings)
+    
+  }
   
-  return(results_combined)
+  return(round_results)
 }
