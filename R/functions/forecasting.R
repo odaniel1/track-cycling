@@ -196,3 +196,18 @@ forecast_tournament_round <- function(standings, round_matches){
   
   return(round_results)
 }
+
+
+forecast_gold_probs <- function(tournament_draws, strength_df){
+  
+  gold_probs <- tournament_draws %>%
+    group_by(.draw) %>%
+    count(rider) %>%
+    transmute(rider, gold_prob = n/sum(n)) %>%
+    ungroup()
+           
+  gold_probs <- left_join(strength_df, gold_probs, by = c(".draw", "rider")) %>%
+    replace_na(list(gold_prob = 0))
+  
+  return(gold_probs)
+}

@@ -91,11 +91,15 @@ tar_target(fcst_qualifying, prepare_forecast_qualifying(fcst_races, riders)),
 tar_target(fcst_strength_draws,
            prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
-tar_target(fcst_tournament_draws,
-           forecast_tournament(fcst_strength_draws %>% filter(.draw <= 1000), fcst_rounds, samples = 100, gold_only = TRUE))
+tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200, gold_only = TRUE)),
+
+tar_target(fcst_gold_probs, forecast_gold_probs(fcst_tournament_draws, fcst_strength_draws)),
 
 ## ---- BETTING --------------------------------------------------------------
 
-# tar_target(odds_returns, prepare_odds_and_stakes('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', fcst_tournament_draws,gender))
+tar_target(odds, prepare_odds('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', as.Date('2021-08-03'), gender)),
 
+tar_target(kelly_strategy, optimise_kelly_bayes(odds, fcst_gold_probs)),
+
+tar_target(kelly_posterior, posterior_kelly_stakes(kelly_strategy, fcst_gold_probs))
 )
