@@ -72,7 +72,8 @@ optimise_kelly_bayes <- function(odds_df, probs_df){
   
   odds_df <- (probs_df %>% filter(.draw == 1) %>% select(rider)) %>%
     left_join(odds_df,by= "rider") %>%
-    arrange(rider)
+    arrange(rider) %>%
+    replace_na(list(fractional_odds = 0.0001))
   
   probs_df <- probs_df %>% arrange(.draw,rider)
   probs_mat <- matrix(probs_df$gold_prob, ncol = nrow(odds_df),byrow = TRUE)
@@ -91,4 +92,29 @@ posterior_kelly_stakes <- function(kelly_df, probs_df){
   probs_df %>%
     left_join(kelly_df) %>%
     mutate(expected_return = gold_prob * kelly_stakes * (1 + fractional_odds))
+}
+
+
+summarise_bet <- function(odds_stakes, kelly_post, wealth, cap){
+  
+  odds_stakes <- odds_stakes %>% 
+    mutate(
+      kelly_stakes = wealth * kelly_stakes,
+      sum_kelly_stakes = sum(kelly_stakes) ,
+      capped_kelly_stakes = if_else(sum_kelly_stakes > cap, kelly_stakes * (cap/sum(kelly_stakes)), kelly_stakes),
+      capped_kelly_stakes = round(capped_kelly_stakes,1)
+    ) 
+  
+  probs_mean <- kelly_post %>%
+    group_by(rider) %>%
+    summarise(gold_prob = mean(gold_prob))
+  
+  odds_stakes <- odds_stakes %>%
+    left_join(probs_mean) %>%
+    mutate(
+      expected_return = gold_prob * capped_kelly_stakes * (1 + fractional_odds)
+    ) %>%
+    arrange(desc(gold_prob)) %>%
+    ungroup() %>%
+    mutate(wealth = wealth, cap = cap)
 }

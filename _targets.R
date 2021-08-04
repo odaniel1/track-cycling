@@ -22,6 +22,12 @@ models <- tribble(
 
 genders <- tibble(gender = c("Men", "Women"))
 
+fcst_init_round <- tribble(
+  ~model_gender, ~round_no, ~round_path,
+  "Men", 5, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_1-12-Finals.csv",
+  "Women", 0, NULL
+)
+
 ## ---- DATA PREPARATION ----------------------------------------------------
 tar_map(values = genders,
   
@@ -63,7 +69,7 @@ tar_map(values = genders,
 #     seed = 1414214,
 #     refresh = 500
 #   ),
-# 
+
 tar_target(stan_data_with_qual_full, prepare_stan_data(riders, matches, pairings, rider_days, training = FALSE)),
 
 tar_stan_mcmc(
@@ -91,15 +97,19 @@ tar_target(fcst_qualifying, prepare_forecast_qualifying(fcst_races, riders)),
 tar_target(fcst_strength_draws,
            prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
-tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200, gold_only = TRUE)),
+tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200, gold_only = TRUE,
+                                                      init_round = fcst_init_round$round_no[fcst_init_round$model_gender == gender],
+                                                      init_path = fcst_init_round$round_path[fcst_init_round$model_gender == gender])),
 
 tar_target(fcst_gold_probs, forecast_gold_probs(fcst_tournament_draws, fcst_strength_draws)),
 
 ## ---- BETTING --------------------------------------------------------------
 
-tar_target(odds, prepare_odds('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', as.Date('2021-08-03'), gender)),
+tar_target(odds, prepare_odds('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', as.Date('2021-08-04'), gender)),
 
 tar_target(kelly_strategy, optimise_kelly_bayes(odds, fcst_gold_probs)),
 
-tar_target(kelly_posterior, posterior_kelly_stakes(kelly_strategy, fcst_gold_probs))
+tar_target(kelly_posterior, posterior_kelly_stakes(kelly_strategy, fcst_gold_probs)),
+
+tar_target(bet_summary, summarise_bet(kelly_strategy, kelly_posterior, wealth = 20 - 3.33 - 3.4, cap = 10 - 3.33 - 3.4))
 )

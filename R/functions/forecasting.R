@@ -82,27 +82,37 @@ prepare_event_strength_draws <- function(draws_df,  days_df, qual_df){
   return(rider_draws)
 }
 
-forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, gold_only = TRUE){
+forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, gold_only = TRUE, init_round = 0, init_path = NULL){
   
   sample_rounds <- round_index %>%
+    filter(round_no >= init_round) %>%
     crossing(.sample = 1:samples, .draw = unique(qualifying_strengths$.draw)) %>%
     mutate(unif_sample = runif(n())) %>%
     group_nest(round_no, keep = TRUE)
   
-  init <- qualifying_strengths %>% group_by(.draw)
-  
-  if(max(init$time) == 0){
-    init <- init %>% arrange(desc(strength))
-  } else {
-    init <- init %>% arrange(time)
+  # if pre qualifying, or only qualifying has been, populate the athlete seeding from the qualifying data. 
+  if(init_round == 0){
+    init <- qualifying_strengths %>% group_by(.draw)
+    
+    if(max(init$time) == 0){
+      init <- init %>% arrange(desc(strength))
+    } else {
+      init <- init %>% arrange(time)
+    }
+    
+    init <- init %>%
+      mutate(round_code = paste0('N',1:n()))
+  }
+  # else populate init using the supplied path
+  else{
+    init_round_codes <- read_csv(unlist(init_path))
+    init <- left_join(init_round_codes, qualifying_strengths)
   }
   
   init <- init %>%
-    mutate(round_code = paste0('N',1:n())) %>%
     crossing(.sample = 1:samples) %>%
     ungroup()
 
-    
   forecast <- reduce(sample_rounds$data, forecast_tournament_round, .init = init)
   
   if(gold_only == TRUE){ forecast <- forecast %>% filter(round_code == 'Gold')}
@@ -121,7 +131,7 @@ forecast_tournament_round <- function(standings, round_matches){
   if(round_matches$competitors[1] == 2){
     round_matches <- round_matches %>%
       mutate(
-        prob_1 = plogis(kappa * (time_1 - time_2) + (strength_1 - strength_2)),
+        prob_1 = plogis((strength_1 - strength_2) - kappa * (time_1 - time_2)),
         winner = case_when(
           sprints == 1 ~ 1 + (unif_sample > prob_1),
           TRUE         ~ 1 + (unif_sample > (3*prob_1^2 - prob_1^3))
@@ -210,4 +220,8 @@ forecast_gold_probs <- function(tournament_draws, strength_df){
     replace_na(list(gold_prob = 0))
   
   return(gold_probs)
+}
+
+initialise_tournament <- function(){
+  
 }
