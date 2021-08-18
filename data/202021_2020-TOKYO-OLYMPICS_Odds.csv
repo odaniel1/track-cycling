@@ -1,0 +1,256 @@
+event,date,odds_date,odds_source,odds_url,gender,race,rider,fractional_odds
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,LAVREYSEN HARRIE,0.8
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,HOOGLAND JEFFREY,2.75
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,Rest of field,4.5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,KENNY JASON,5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,GLAETZER MATTHEW,12
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,DMITRIEV DENIS,14
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,RUDYK MATEUSZ,14
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,CARLIN JACK,20
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,WEBSTER SAM,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-men-11862090,Men,Individual Sprint,LEVY MAXIMILIAN,33
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,HINZE EMMA,2.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,Rest of field,2.75
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,LEE WAI SZE,3.75
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,VOINOVA ANASTASIIA,4.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,VAN RIESSEN LAURINE,9
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,ZHONG TIANSHI,10
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,FRIEDRICH LEA SOPHIE,12
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,GROS MATHILDE,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,MITCHELL KELSEY,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,bwin,https://sports.bwin.com/en/sports/events/olympics-2020-sprint-women-11734207,Women,Individual Sprint,ANDREWS ELLESSE,18
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LAVREYSEN HARRIE,0.85
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HOOGLAND JEFFREY,2.75
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,KENNY JASON,6.5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,DMITRIEV DENIS,7.5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,GLAETZER MATTHEW,11
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,AWANG MOHD AZIZULHASNI,12
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RUDYK MATEUSZ,14
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,CARLIN JACK,16
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WEBSTER SAM,20
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BOTTICHER STEFAN,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LEVY MAXIMILIAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,MITCHELL ETHAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HART NATHAN,40
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,VIGIER SEBASTIEN,40
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,NITTA YUDAI,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,QUINTERO CHAVARRO KEVIN SANTIAGO,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BABEK TOMAS,66
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HELAL RAYAN,66
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BARRETTE HUGO,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PAUL NICHOLAS,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RAJKOWSKI PATRYK,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,XU CHAO,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SPIES JEAN,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,TJON EN FA JAIR,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAKIMOTO YUTA,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,YAKUSHEVSKIY PAVEL,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BROWNE KWESI,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PONOMARYOV SERGEY,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SAHROM MUHAMMAD SHAH FIRDAUS,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAMMES NICK,200
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,HINZE EMMA,2.25
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE WAI SZE,3.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VOINOVA ANASTASIIA,5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,FRIEDRICH LEA SOPHIE,7.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ZHONG TIANSHI,7.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VAN RIESSEN LAURINE,9
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GROS MATHILDE,12
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ANDREWS ELLESSE,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BASOVA LIUBOV,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MITCHELL KELSEY,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HYEJIN,18
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MCCULLOCH KAARLE,25
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BRASPENNINCX SHANNE,28
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BAO SHANJU,33
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GODBY MADALYN,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KRUPECKAITE SIMONA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MARCHANT KATY,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,SHMELEVA DARIA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,STARIKOVA OLENA,50
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DEMAY CORALIE,66
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KOBAYASHI YUKA,66
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GENEST LAURIANE,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,JAMES KIRSTIE,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DU PREEZ CHARLENE,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GAXIOLA GONZALEZ LUZ DANIELA,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KARWACKA MARLENA,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LOS URSZULA,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HOI YAN JESSICA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MAROZAITE MIGLE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-01,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VERDUGO OSUNA YULI,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LAVREYSEN HARRIE,0.85
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HOOGLAND JEFFREY,2.75
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,KENNY JASON,6.5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,DMITRIEV DENIS,12
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,GLAETZER MATTHEW,12
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,AWANG MOHD AZIZULHASNI,18
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RUDYK MATEUSZ,14
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,CARLIN JACK,20
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WEBSTER SAM,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BOTTICHER STEFAN,28
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LEVY MAXIMILIAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,MITCHELL ETHAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HART NATHAN,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,VIGIER SEBASTIEN,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,NITTA YUDAI,40
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,QUINTERO CHAVARRO KEVIN SANTIAGO,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BABEK TOMAS,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HELAL RAYAN,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BARRETTE HUGO,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PAUL NICHOLAS,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RAJKOWSKI PATRYK,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,XU CHAO,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SPIES JEAN,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,TJON EN FA JAIR,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAKIMOTO YUTA,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,YAKUSHEVSKIY PAVEL,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BROWNE KWESI,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PONOMARYOV SERGEY,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SAHROM MUHAMMAD SHAH FIRDAUS,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-02,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAMMES NICK,200
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,HINZE EMMA,2
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE WAI SZE,4
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VOINOVA ANASTASIIA,5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,FRIEDRICH LEA SOPHIE,8
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ZHONG TIANSHI,8
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VAN RIESSEN LAURINE,10
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GROS MATHILDE,18
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ANDREWS ELLESSE,18
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BASOVA LIUBOV,25
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MITCHELL KELSEY,12
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HYEJIN,20
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MCCULLOCH KAARLE,28
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BRASPENNINCX SHANNE,33
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BAO SHANJU,20
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GODBY MADALYN,50
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KRUPECKAITE SIMONA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MARCHANT KATY,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,SHMELEVA DARIA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,STARIKOVA OLENA,50
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DEMAY CORALIE,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KOBAYASHI YUKA,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GENEST LAURIANE,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,JAMES KIRSTIE,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DU PREEZ CHARLENE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GAXIOLA GONZALEZ LUZ DANIELA,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KARWACKA MARLENA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LOS URSZULA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HOI YAN JESSICA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MAROZAITE MIGLE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VERDUGO OSUNA YULI,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LAVREYSEN HARRIE,0.7
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HOOGLAND JEFFREY,3
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,KENNY JASON,6.5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,DMITRIEV DENIS,12
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,GLAETZER MATTHEW,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,AWANG MOHD AZIZULHASNI,18
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RUDYK MATEUSZ,14
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,CARLIN JACK,20
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WEBSTER SAM,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BOTTICHER STEFAN,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LEVY MAXIMILIAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,MITCHELL ETHAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HART NATHAN,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,VIGIER SEBASTIEN,40
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,NITTA YUDAI,40
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,QUINTERO CHAVARRO KEVIN SANTIAGO,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BABEK TOMAS,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HELAL RAYAN,66
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BARRETTE HUGO,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PAUL NICHOLAS,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RAJKOWSKI PATRYK,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,XU CHAO,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SPIES JEAN,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,TJON EN FA JAIR,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAKIMOTO YUTA,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,YAKUSHEVSKIY PAVEL,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BROWNE KWESI,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PONOMARYOV SERGEY,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SAHROM MUHAMMAD SHAH FIRDAUS,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-03,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAMMES NICK,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LAVREYSEN HARRIE,0.75
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HOOGLAND JEFFREY,2
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,KENNY JASON,6.5
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,DMITRIEV DENIS,12
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,AWANG MOHD AZIZULHASNI,20
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RUDYK MATEUSZ,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,CARLIN JACK,10
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WEBSTER SAM,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BOTTICHER STEFAN,25
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LEVY MAXIMILIAN,33
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,MITCHELL ETHAN,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HART NATHAN,50
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,VIGIER SEBASTIEN,40
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,QUINTERO CHAVARRO KEVIN SANTIAGO,80
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HELAL RAYAN,66
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,BARRETTE HUGO,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,PAUL NICHOLAS,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,RAJKOWSKI PATRYK,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,XU CHAO,100
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,TJON EN FA JAIR,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAKIMOTO YUTA,150
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,SAHROM MUHAMMAD SHAH FIRDAUS,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-04,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,WAMMES NICK,200
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,LAVREYSEN HARRIE,0.75
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,HOOGLAND JEFFREY,1.6
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,DMITRIEV DENIS,6
+TOKYO 2020 OLYMPICS,2021-08-04,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841859,Men,Individual Sprint,CARLIN JACK,5.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,HINZE EMMA,2
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE WAI SZE,4
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VOINOVA ANASTASIIA,5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,FRIEDRICH LEA SOPHIE,7
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ZHONG TIANSHI,8
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VAN RIESSEN LAURINE,11
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GROS MATHILDE,20
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ANDREWS ELLESSE,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BASOVA LIUBOV,28
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MITCHELL KELSEY,16
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HYEJIN,22
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MCCULLOCH KAARLE,28
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BRASPENNINCX SHANNE,22
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BAO SHANJU,20
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GODBY MADALYN,66
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KRUPECKAITE SIMONA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MARCHANT KATY,33
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,SHMELEVA DARIA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,STARIKOVA OLENA,50
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DEMAY CORALIE,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KOBAYASHI YUKA,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GENEST LAURIANE,66
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,JAMES KIRSTIE,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DU PREEZ CHARLENE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GAXIOLA GONZALEZ LUZ DANIELA,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KARWACKA MARLENA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LOS URSZULA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HOI YAN JESSICA,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MAROZAITE MIGLE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-05,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VERDUGO OSUNA YULI,200
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,HINZE EMMA,2.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE WAI SZE,4
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VOINOVA ANASTASIIA,6
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,FRIEDRICH LEA SOPHIE,5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ZHONG TIANSHI,9
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GROS MATHILDE,18
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,ANDREWS ELLESSE,14
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BASOVA LIUBOV,33
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MITCHELL KELSEY,11
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE HYEJIN,25
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MCCULLOCH KAARLE,25
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BRASPENNINCX SHANNE,7.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,BAO SHANJU,22
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GODBY MADALYN,66
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KRUPECKAITE SIMONA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MARCHANT KATY,28
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,SHMELEVA DARIA,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,STARIKOVA OLENA,50
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,KOBAYASHI YUKA,80
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GENEST LAURIANE,40
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,DU PREEZ CHARLENE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,GAXIOLA GONZALEZ LUZ DANIELA,100
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MAROZAITE MIGLE,150
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-06,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,VERDUGO OSUNA YULI,200
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-07,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,HINZE EMMA,1
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-07,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,LEE WAI SZE,5.5
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-07,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,MITCHELL KELSEY,4
+TOKYO 2020 OLYMPICS,2021-08-06,2021-08-07,Unibet,https://www.unibet.co.uk/betting/sports/event/1007841912,Women,Individual Sprint,STARIKOVA OLENA,2.5
