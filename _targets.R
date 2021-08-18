@@ -33,7 +33,8 @@ tar_map(values = genders,
   
   tar_target(model_list, models),
   
-  tar_target(tissot_race_path, "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
+  tar_target(tissot_race_path,
+             "../tissot-scraper/data/DONT-EDIT-race-lookup.csv", format = 'file'),
   
   tar_target(manual_race_path, "data/MANUAL-race-lookup.csv", format = 'file'),
   
@@ -53,24 +54,29 @@ tar_map(values = genders,
 
   tar_target(rider_days, prepare_rider_days(results, riders)),
 
-  tar_target(matches, prepare_matches(results, riders, rider_days, teams, qualifying, events)),
+  tar_target(matches,
+             prepare_matches(results, riders, rider_days, teams, qualifying, events)),
 
-  tar_target(stan_data_without_qual, prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days, training = TRUE)),
+  tar_target(stan_data_without_qual,
+             prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days, training = TRUE)),
 
-  tar_target(stan_data_with_qual, prepare_stan_data(riders, matches, pairings, rider_days, training = TRUE)),
+  tar_target(stan_data_with_qual, 
+             repare_stan_data(riders, matches, pairings, rider_days, training = TRUE)),
   
-## ---- STAN MODELS --------------------------------------------------------- 
-# tar_stan_mcmc(
-#     name = bt,
-#     stan_files = models$path,
-#     data = stan_data_without_qual,
-#     iter_warmup = 1999, iter_sampling = 2000,
-#     parallel_chains = 4,
-#     seed = 1414214,
-#     refresh = 500
-#   ),
+# ---- STAN MODELS ---------------------------------------------------------
+tar_stan_mcmc(
+    name = bt,
+    stan_files = models$path,
+    data = stan_data_without_qual,
+    iter_warmup = 1999, iter_sampling = 2000,
+    parallel_chains = 4,
+    seed = 1414214,
+    refresh = 500
+  ),
 
-tar_target(stan_data_with_qual_full, prepare_stan_data(riders, matches, pairings, rider_days, training = FALSE)),
+tar_target(stan_data_with_qual_full,
+           prepare_stan_data(riders, matches, pairings, rider_days, training = FALSE)
+  ),
 
 tar_stan_mcmc(
   name = bt_qual,
@@ -82,7 +88,7 @@ tar_stan_mcmc(
   parallel_chains = 4,
   seed = 1414214,
   refresh = 500
-),
+  ),
 
 ## ---- FORECASTING ---------------------------------------------------------
 
@@ -97,20 +103,31 @@ tar_target(fcst_qualifying, prepare_forecast_qualifying(fcst_races, riders)),
 tar_target(fcst_strength_draws,
            prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
-tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200,
-                                                      accumulate = FALSE, gold_only = TRUE,
-                                                      init_round = fcst_inputs$round_no[fcst_inputs$model_gender == gender],
-                                                      init_path = fcst_inputs$round_path[fcst_inputs$model_gender == gender])),
+tar_target(fcst_tournament_draws,
+           forecast_tournament(
+             fcst_strength_draws, fcst_rounds, samples = 200,
+             accumulate = FALSE, gold_only = TRUE,
+             init_round = fcst_inputs$round_no[fcst_inputs$model_gender == gender],
+             init_path = fcst_inputs$round_path[fcst_inputs$model_gender == gender]
+            )
+            ),
 
-tar_target(fcst_gold_probs, forecast_gold_probs(fcst_tournament_draws, fcst_strength_draws)),
+tar_target(fcst_gold_probs,
+           forecast_gold_probs(fcst_tournament_draws, fcst_strength_draws)),
 
 ## ---- BETTING --------------------------------------------------------------
 
-tar_target(odds, prepare_odds('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', fcst_inputs$odds_date[fcst_inputs$model_gender == gender], gender)),
+tar_target(odds,
+           prepare_odds(
+             'data/202021_2020-TOKYO-OLYMPICS_Odds.csv',
+             fcst_inputs$odds_date[fcst_inputs$model_gender == gender],
+             gender)
+           ),
 
 tar_target(kelly_strategy, optimise_kelly_bayes(odds, fcst_gold_probs)),
 
-tar_target(kelly_posterior, posterior_kelly_stakes(kelly_strategy, fcst_gold_probs)),
+tar_target(kelly_posterior,
+           posterior_kelly_stakes(kelly_strategy, fcst_gold_probs)),
 
 tar_target(bet_summary,
            summarise_bet(
