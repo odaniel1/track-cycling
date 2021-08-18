@@ -22,10 +22,10 @@ models <- tribble(
 
 genders <- tibble(gender = c("Men", "Women"))
 
-fcst_init_round <- tribble(
-  ~model_gender, ~round_no, ~round_path,
-  "Men", 5, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_1-12-Finals.csv",
-  "Women", 0, NULL
+fcst_inputs <- tribble(
+  ~model_gender, ~round_no, ~round_path, ~odds_date, ~wealth, ~cap, ~output_path,
+  "Men", 8, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_Quarterfinals.csv", '2021-08-05', 20 - 3.33 - 3.4, 6 ,"data/bets/2020-08-05-Men-PostQuarterfinals.csv",
+  "Women", 8, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Women_Quarterfinals.csv", '2021-08-07', 11, 11,"data/bets/2020-08-07-Women-PostQuarterfinals.csv"
 )
 
 ## ---- DATA PREPARATION ----------------------------------------------------
@@ -98,18 +98,26 @@ tar_target(fcst_strength_draws,
            prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
 tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200, gold_only = TRUE,
-                                                      init_round = fcst_init_round$round_no[fcst_init_round$model_gender == gender],
-                                                      init_path = fcst_init_round$round_path[fcst_init_round$model_gender == gender])),
+                                                      init_round = fcst_inputs$round_no[fcst_inputs$model_gender == gender],
+                                                      init_path = fcst_inputs$round_path[fcst_inputs$model_gender == gender])),
 
 tar_target(fcst_gold_probs, forecast_gold_probs(fcst_tournament_draws, fcst_strength_draws)),
 
 ## ---- BETTING --------------------------------------------------------------
 
-tar_target(odds, prepare_odds('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', as.Date('2021-08-04'), gender)),
+tar_target(odds, prepare_odds('data/202021_2020-TOKYO-OLYMPICS_Odds.csv', fcst_inputs$odds_date[fcst_inputs$model_gender == gender], gender)),
 
 tar_target(kelly_strategy, optimise_kelly_bayes(odds, fcst_gold_probs)),
 
 tar_target(kelly_posterior, posterior_kelly_stakes(kelly_strategy, fcst_gold_probs)),
 
-tar_target(bet_summary, summarise_bet(kelly_strategy, kelly_posterior, wealth = 20 - 3.33 - 3.4, cap = 10 - 3.33 - 3.4))
+tar_target(bet_summary,
+           summarise_bet(
+             kelly_strategy, kelly_posterior,
+             wealth = fcst_inputs$wealth[fcst_inputs$model_gender == gender],
+             cap =fcst_inputs$cap[fcst_inputs$model_gender == gender],
+             output_path = fcst_inputs$output_path[fcst_inputs$model_gender == gender]
+            ),
+           format = "file"
+  )
 )
