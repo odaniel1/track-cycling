@@ -82,7 +82,7 @@ prepare_event_strength_draws <- function(draws_df,  days_df, qual_df){
   return(rider_draws)
 }
 
-forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, gold_only = TRUE, init_round = 0, init_path = NULL){
+forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, accumulate = FALSE, gold_only = TRUE, init_round = 0, init_path = NULL){
   
   sample_rounds <- round_index %>%
     filter(round_no >= init_round) %>%
@@ -113,7 +113,8 @@ forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, 
     crossing(.sample = 1:samples) %>%
     ungroup()
 
-  forecast <- reduce(sample_rounds$data, forecast_tournament_round, .init = init)
+  if(accumulate == FALSE) forecast <- reduce(sample_rounds$data, forecast_tournament_round, .init = init)
+  else forecast <- accumulate(sample_rounds$data, forecast_tournament_round, .init = init) %>% bind_rows()
   
   if(gold_only == TRUE){ forecast <- forecast %>% filter(round_code == 'Gold')}
   

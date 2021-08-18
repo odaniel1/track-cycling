@@ -97,7 +97,8 @@ tar_target(fcst_qualifying, prepare_forecast_qualifying(fcst_races, riders)),
 tar_target(fcst_strength_draws,
            prepare_event_strength_draws(bt_qual_draws_bt6,rider_days, fcst_qualifying)),
 
-tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200, gold_only = TRUE,
+tar_target(fcst_tournament_draws, forecast_tournament(fcst_strength_draws, fcst_rounds, samples = 200,
+                                                      accumulate = FALSE, gold_only = TRUE,
                                                       init_round = fcst_inputs$round_no[fcst_inputs$model_gender == gender],
                                                       init_path = fcst_inputs$round_path[fcst_inputs$model_gender == gender])),
 
