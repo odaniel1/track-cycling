@@ -75,6 +75,8 @@ optimise_kelly_bayes <- function(odds_df, probs_df){
     arrange(rider) %>%
     replace_na(list(fractional_odds = 0.0001))
   
+  print(odds_df)
+  
   probs_df <- probs_df %>% arrange(.draw,rider)
   probs_mat <- matrix(probs_df$gold_prob, ncol = nrow(odds_df),byrow = TRUE)
   
@@ -95,7 +97,7 @@ posterior_kelly_stakes <- function(kelly_df, probs_df){
 }
 
 
-summarise_bet <- function(odds_stakes, kelly_post, wealth, cap){
+summarise_bet <- function(odds_stakes, kelly_post, wealth, cap, output_path){
   
   odds_stakes <- odds_stakes %>% 
     mutate(
@@ -117,4 +119,10 @@ summarise_bet <- function(odds_stakes, kelly_post, wealth, cap){
     arrange(desc(gold_prob)) %>%
     ungroup() %>%
     mutate(wealth = wealth, cap = cap)
+  
+  odds_stakes <-odds_stakes %>%
+    filter(!is.na(bookies_prob))
+  
+  write_csv(odds_stakes, output_path)
+  return(output_path)
 }
