@@ -25,9 +25,7 @@ log_wealth <- function(stake, fractional_odds){
   log_wealth <- log(inv_stake + stake * (1+fractional_odds))
   
   if(is.nan(sum(log_wealth))){
-    print(stake)
-    print(sum(stake))
-    print(log_wealth)
+    print("Sum of log wealth is NaN")
   }
   
   return(log_wealth)  
@@ -42,13 +40,31 @@ expected_log_wealth_mat <- function(stake, fractional_odds, prob_mat){
   return(expected_log_wealth_vec)
 }
 
+
+variance_log_wealth_mat <- function(stake, fractional_odds, prob_mat){
+  
+  log_wealth_vec <- log_wealth(stake, fractional_odds)
+  log_wealth2_vec <- log_wealth(stake, fractional_odds)^2
+  
+  expected_log_wealth_vec <- prob_mat %*% log_wealth_vec
+  expected_log_wealth2_vec <- prob_mat %*% log_wealth2_vec
+  
+  variance_vec <- expected_log_wealth2_vec - expected_log_wealth_vec^2
+  
+  return(variance_vec)
+}
+
 kelly_evaluation <- function(stake, fractional_odds, prob_mat){
   -sum(expected_log_wealth_mat(stake, fractional_odds, prob_mat))
 } 
 
-kelly_constraints <- function(stake,fractional_odds, prob_mat){sum(stake) -1}
+kelly_var_evaluation <- function(stake, fractional_odds, prob_mat, lambda){
+  -sum(expected_log_wealth_mat(stake, fractional_odds, prob_mat) - lambda * variance_log_wealth_mat(stake, fractional_odds, prob_mat))
+} 
 
-optimise_kelly_stakes <- function(fractional_odds, prob_mat){
+sum_less_1_constraints <- function(stake,fractional_odds, prob_mat){sum(stake) -1}
+
+optimise_kelly_stakes <- function(fractional_odds, prob_mat, strategy_func = kelly_evaluation){
   
   stake0 <- rep(0.5 * 1/ncol(prob_mat),ncol(prob_mat))
 
@@ -57,9 +73,9 @@ optimise_kelly_stakes <- function(fractional_odds, prob_mat){
   
   opt <- nloptr(
     x0 = stake0,
-    eval_f = kelly_evaluation,
+    eval_f = strategy_func,
     lb = lb, ub = ub,
-    eval_g_ineq = kelly_constraints,
+    eval_g_ineq = sum_less_1_constraints,
     opts = list("algorithm"="NLOPT_LN_COBYLA","xtol_rel"=1.0e-4, "xtol_rel"=1.0e-3,"maxeval"=1e5),
     fractional_odds=fractional_odds,
     prob_mat = prob_mat
@@ -68,19 +84,18 @@ optimise_kelly_stakes <- function(fractional_odds, prob_mat){
   return(opt)
 }
 
-optimise_kelly_bayes <- function(odds_df, probs_df){
+optimise_kelly_bayes <- function(odds_df, probs_df, strategy_func = kelly_evaluation){
   
   odds_df <- (probs_df %>% filter(.draw == 1) %>% select(rider)) %>%
     left_join(odds_df,by= "rider") %>%
     arrange(rider) %>%
     replace_na(list(fractional_odds = 0.0001))
   
-  print(odds_df)
-  
   probs_df <- probs_df %>% arrange(.draw,rider)
+  
   probs_mat <- matrix(probs_df$gold_prob, ncol = nrow(odds_df),byrow = TRUE)
   
-  kelly_opt <- optimise_kelly_stakes(odds_df$fractional_odds, probs_mat) 
+  kelly_opt <- optimise_kelly_stakes(odds_df$fractional_odds, probs_mat, strategy_func) 
   
   print(sprintf('NLopt solver status: %s (%s)', kelly_opt$status, kelly_opt$message))
   

@@ -24,7 +24,8 @@ genders <- tibble(gender = c("Men", "Women"))
 
 fcst_inputs <- tribble(
   ~model_gender, ~round_no, ~round_path, ~odds_date, ~wealth, ~cap, ~output_path,
-  "Men", 8, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_Quarterfinals.csv", '2021-08-05', 20 - 3.33 - 3.4, 6 ,"data/bets/2020-08-05-Men-PostQuarterfinals.csv",
+  "Men", 0, NULL, '2021-08-04', 20, 6 ,"data/bets/temp.csv",
+  # "Men", 8, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_Quarterfinals.csv", '2021-08-05', 20 - 3.33 - 3.4, 6 ,"data/bets/2020-08-05-Men-PostQuarterfinals.csv",
   "Women", 8, "data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Women_Quarterfinals.csv", '2021-08-07', 11, 11,"data/bets/2020-08-07-Women-PostQuarterfinals.csv"
 )
 
@@ -61,18 +62,18 @@ tar_map(values = genders,
              prepare_stan_data(riders, matches %>% filter(round != "Qualifying"), pairings, rider_days, training = TRUE)),
 
   tar_target(stan_data_with_qual, 
-             repare_stan_data(riders, matches, pairings, rider_days, training = TRUE)),
+             prepare_stan_data(riders, matches, pairings, rider_days, training = TRUE)),
   
 # ---- STAN MODELS ---------------------------------------------------------
-tar_stan_mcmc(
-    name = bt,
-    stan_files = models$path,
-    data = stan_data_without_qual,
-    iter_warmup = 1999, iter_sampling = 2000,
-    parallel_chains = 4,
-    seed = 1414214,
-    refresh = 500
-  ),
+# tar_stan_mcmc(
+#     name = bt,
+#     stan_files = models$path,
+#     data = stan_data_without_qual,
+#     iter_warmup = 1999, iter_sampling = 2000,
+#     parallel_chains = 4,
+#     seed = 1414214,
+#     refresh = 500
+#   ),
 
 tar_target(stan_data_with_qual_full,
            prepare_stan_data(riders, matches, pairings, rider_days, training = FALSE)
@@ -127,15 +128,15 @@ tar_target(odds,
 tar_target(kelly_strategy, optimise_kelly_bayes(odds, fcst_gold_probs)),
 
 tar_target(kelly_posterior,
-           posterior_kelly_stakes(kelly_strategy, fcst_gold_probs)),
+           posterior_kelly_stakes(kelly_strategy, fcst_gold_probs))
 
-tar_target(bet_summary,
-           summarise_bet(
-             kelly_strategy, kelly_posterior,
-             wealth = fcst_inputs$wealth[fcst_inputs$model_gender == gender],
-             cap =fcst_inputs$cap[fcst_inputs$model_gender == gender],
-             output_path = fcst_inputs$output_path[fcst_inputs$model_gender == gender]
-            ),
-           format = "file"
-  )
+# tar_target(bet_summary,
+#            summarise_bet(
+#              kelly_strategy, kelly_posterior,
+#              wealth = fcst_inputs$wealth[fcst_inputs$model_gender == gender],
+#              cap =fcst_inputs$cap[fcst_inputs$model_gender == gender],
+#              output_path = fcst_inputs$output_path[fcst_inputs$model_gender == gender]
+#             ),
+#            format = "file"
+#   )
 )

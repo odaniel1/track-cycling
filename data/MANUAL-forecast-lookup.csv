@@ -1,0 +1,3 @@
+event,year,season,location,location_country,gender,race,round,id,url_path,pdf_path,csv_path,date,csv_cached
+2020 TOKYO OLYMPICS,2021,2020/21,Tokyo,Japan,Men,Individual Sprint,Qualifying,202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_Startlist,,,data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Men_Startlist.csv,2021-08-04,TRUE
+2020 TOKYO OLYMPICS,2021,2020/21,Tokyo,Japan,Women,Individual Sprint,Qualifying,202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Women_Qualifying,,,data/csv/202021_2020-TOKYO-OLYMPICS_Individual-Sprint-Women_Qualifying.csv,2021-08-04,TRUE

@@ -48,6 +48,7 @@ functions {
 }
 
 data {
+  int<lower=0,upper=1> training;
   // Dimensions
   int<lower=0> R; // Riders
   int<lower=0> M; // Matches
@@ -166,6 +167,7 @@ model{
 	
 
   head(sprints, T) ~ match_logit(head(delta, T));
+  if(training != 1) tail(sprints,M-T) ~ match_logit(tail(delta,M-T));
 }
 
 generated quantities {

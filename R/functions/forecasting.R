@@ -83,7 +83,7 @@ prepare_event_strength_draws <- function(draws_df,  days_df, qual_df){
 }
 
 forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, accumulate = FALSE, gold_only = TRUE, init_round = 0, init_path = NULL){
-  
+
   sample_rounds <- round_index %>%
     filter(round_no >= init_round) %>%
     crossing(.sample = 1:samples, .draw = unique(qualifying_strengths$.draw)) %>%
@@ -112,7 +112,7 @@ forecast_tournament <- function(qualifying_strengths, round_index, samples = 1, 
   init <- init %>%
     crossing(.sample = 1:samples) %>%
     ungroup()
-
+  
   if(accumulate == FALSE) forecast <- reduce(sample_rounds$data, forecast_tournament_round, .init = init)
   else forecast <- accumulate(sample_rounds$data, forecast_tournament_round, .init = init) %>% bind_rows()
   
@@ -166,6 +166,7 @@ forecast_tournament_round <- function(standings, round_matches){
       .sample,
       .draw,
       round_no,
+      match_no,
       kappa,
       rider = rider_1,
       time = time_1,
@@ -175,6 +176,7 @@ forecast_tournament_round <- function(standings, round_matches){
       .sample,
       .draw,
       round_no,
+      # match_no,
       kappa,
       rider = rider_2,
       time = time_2,
@@ -189,6 +191,7 @@ forecast_tournament_round <- function(standings, round_matches){
           .sample,
           .draw,
           round_no,
+          # match_no,
           kappa,
           rider = rider_3,
           time = time_3,
